@@ -1,0 +1,6333 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ระบบคัดกรองเด็กนอนกรน | โรงพยาบาลธัญบุรี</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700;800&family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Tokens ── */
+    :root {
+      --p:       #EA580C;
+      --p-dk:    #9A3412;
+      --p-lt:    #FFF7ED;
+      --gold:    #C9963A;
+      --gold-lt: #FDF5E6;
+      --navy:    #0D2137;
+      --bg:      #F2F8FA;
+      --sur:     #FFFFFF;
+      --sur2:    #F7FBFC;
+      --ink:     #1A2B38;
+      --ink2:    #344D5C;
+      --mt:      #64778A;
+      --mt-lt:   #96A8B4;
+      --bd:      #CFD9E0;
+      --bd-lt:   #E4EDF2;
+      --green:   #077E56;
+      --grn-lt:  #EDFAF4;
+      --amber:   #B36A00;
+      --amb-lt:  #FFF7E6;
+      --red:     #C02B36;
+      --red-lt:  #FEF2F3;
+      --purple:  #6634C0;
+      --pur-lt:  #F3EEFF;
+      --sky:     #0369A1;
+      --sky-lt:  #EFF8FF;
+
+      --sh-xs: 0 1px 3px rgba(13,33,55,.07);
+      --sh-sm: 0 2px 8px rgba(13,33,55,.08), 0 1px 2px rgba(13,33,55,.05);
+      --sh-md: 0 4px 16px rgba(13,33,55,.10), 0 2px 4px rgba(13,33,55,.06);
+      --sh-lg: 0 8px 32px rgba(13,33,55,.12), 0 4px 8px rgba(13,33,55,.07);
+      --sh-xl: 0 20px 60px rgba(13,33,55,.14), 0 8px 20px rgba(13,33,55,.08);
+
+      --r-sm:  6px;
+      --r:     12px;
+      --r-lg:  18px;
+      --r-xl:  28px;
+      --r-f:   9999px;
+      --ring:  0 0 0 3px rgba(234,88,12,.22);
+    }
+
+    /* ── Base ── */
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: "Sarabun","Noto Sans Thai","Leelawadee UI",sans-serif;
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--ink);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, .hero-copy h1, .section-title, .card-title, .modal-title {
+      font-family: "Kanit","Sarabun","Noto Sans Thai",sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    ::selection { background: rgba(234,88,12,.18); }
+
+    a { color: var(--p); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    button, input, select, textarea { font: inherit; color: inherit; }
+
+    /* ── Layout ── */
+    .wrap {
+      width: min(1240px, 100%);
+      padding-inline: 24px;
+      margin-inline: auto;
+    }
+
+    /* ══════════════════════════════════════
+       HEADER
+    ══════════════════════════════════════ */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #064E3B;
+    }
+
+    .app-header::before {
+      content: "";
+      display: block;
+      height: 4px;
+      background: linear-gradient(90deg,
+        #064E3B 0%, #059669 30%, #10B981 55%,
+        #34D399 78%, #A7F3D0 100%);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 68px;
+      padding: 12px 0;
+      overflow: hidden;
+      max-height: 120px;
+      transition: max-height .3s ease, padding .3s ease, min-height .3s ease;
+    }
+
+    /* Collapse topbar when logged in (any view except login) */
+    body[data-view]:not([data-view="login"]) .topbar {
+      max-height: 0;
+      min-height: 0;
+      padding: 0;
+    }
+
+    /* tabs-right: user pill + logout inside nav */
+    .tabs-right {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+    body[data-view]:not([data-view="login"]) .tabs-right {
+      display: flex;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex: 1 1 auto;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .brand-mark {
+      flex: 0 0 auto;
+      width: 62px;
+      height: 62px;
+      border-radius: var(--r-sm);
+      background: linear-gradient(145deg, #34D399, #064E3B);
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: .06em;
+      box-shadow: 0 2px 14px rgba(5,150,105,.5),
+                  inset 0 1px 0 rgba(255,255,255,.22);
+    }
+
+    .brand-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .brand-subtitle {
+      font-size: 17px;
+      color: rgba(255,255,255,.60);
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      flex-shrink: 0;
+    }
+
+    .user-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      max-width: 320px;
+      padding: 7px 14px;
+      border-radius: var(--r-f);
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.08);
+      color: rgba(255,255,255,.86);
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-pill::before {
+      content: "";
+      flex: 0 0 auto;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #5EE4C4;
+      box-shadow: 0 0 0 2px rgba(94,228,196,.30);
+    }
+
+    /* ── Tabs ── */
+    .tabs {
+      display: none;
+      gap: 4px;
+      overflow-x: auto;
+      padding: 10px 0 14px;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+
+    .tabs button {
+      flex: 0 0 auto;
+      min-height: 36px;
+      padding: 7px 18px;
+      border-radius: var(--r-f);
+      border: 1px solid rgba(52,211,153,.20);
+      background: rgba(52,211,153,.10);
+      color: rgba(255,255,255,.70);
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all .18s;
+    }
+
+    .tabs button:hover {
+      background: rgba(52,211,153,.20);
+      color: #fff;
+    }
+
+    .tabs button.active {
+      background: #10B981;
+      border-color: #059669;
+      color: #fff;
+      box-shadow: 0 4px 18px rgba(16,185,129,.50);
+    }
+
+    /* ══════════════════════════════════════
+       MAIN
+    ══════════════════════════════════════ */
+    .app-main { padding: 32px 0 60px; }
+
+    /* Login layout: stacked (hero on top → login cards below) */
+    body[data-view="login"] .app-main { display: block; }
+
+    body[data-view="login"] .hero {
+      position: relative;
+      top: auto;
+      display: block;
+      margin-bottom: 24px;
+    }
+
+    body[data-view="login"] #login { display: block; }
+
+    body[data-view="login"] .hero-stats { grid-template-columns: repeat(3,1fr); }
+    body[data-view="login"] .workflow   { grid-template-columns: repeat(5,1fr); }
+
+    body[data-view]:not([data-view="login"]) .hero { display: none; }
+    body[data-view]:not([data-view="login"]) .app-main { display: block; }
+
+    /* ── Hero ── */
+    .hero {
+      display: block;
+      margin-bottom: 24px;
+    }
+
+    .hero-copy {
+      position: relative;
+      padding: 52px 52px 44px 52px;
+      border-radius: var(--r-lg);
+      background:
+        radial-gradient(ellipse at 78% 28%, rgba(249,115,22,.14) 0%, transparent 52%),
+        linear-gradient(140deg, #0C1E35 0%, #093847 52%, #065048 100%);
+      border: 1px solid rgba(255,255,255,.09);
+      box-shadow: 0 32px 80px rgba(8,20,38,.50), 0 10px 28px rgba(8,20,38,.28);
+      overflow: hidden;
+      color: #fff;
+    }
+
+    .hero-copy::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 4px;
+      background: linear-gradient(90deg, #F97316 0%, #F59E0B 48%, #10B981 100%);
+      border-radius: var(--r-lg) var(--r-lg) 0 0;
+    }
+
+    .hero-copy::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,.038) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
+    }
+
+    .hero-copy > * { position: relative; z-index: 1; }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: var(--r-f);
+      background: var(--p-lt);
+      color: var(--p-dk);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-size: clamp(19px, 2.2vw, 28px);
+      font-weight: 900;
+      color: var(--navy);
+      line-height: 1.2;
+    }
+
+    h2 {
+      font-size: clamp(16px, 1.7vw, 21px);
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.28;
+    }
+
+    h3 { font-size: 16px; font-weight: 800; color: var(--ink); line-height: 1.3; }
+
+    .lead {
+      margin-top: 14px;
+      font-size: 15px;
+      line-height: 1.85;
+      color: var(--mt);
+      max-width: 510px;
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .hero-stat {
+      padding: 0;
+      border-radius: 16px;
+      background: #fff;
+      border: none;
+      box-shadow: 0 6px 24px rgba(13,33,55,.10), 0 1px 4px rgba(13,33,55,.06);
+      overflow: hidden;
+      transition: transform .22s ease, box-shadow .22s ease;
+    }
+    .hero-stat:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 16px 40px rgba(13,33,55,.14), 0 4px 8px rgba(13,33,55,.07);
+    }
+
+    /* Image wrapper with gradient + badge */
+    .stat-img-wrap {
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-img-wrap::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 55%;
+      background: linear-gradient(to top, rgba(255,255,255,.95) 0%, transparent 100%);
+      pointer-events: none;
+    }
+    .stat-img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      display: block;
+      transition: transform .4s ease;
+    }
+    .hero-stat:hover .stat-img {
+      transform: scale(1.06);
+    }
+    .stat-badge {
+      position: absolute;
+      top: 10px;
+      left: 12px;
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(234,88,12,.18);
+      color: var(--p);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 99px;
+      z-index: 2;
+    }
+
+    /* Text body */
+    .stat-body {
+      padding: 12px 14px 16px;
+    }
+    .stat-body strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--ink);
+      line-height: 1.35;
+    }
+    .stat-body small {
+      display: block;
+      margin-top: 4px;
+      font-size: 11.5px;
+      color: var(--mt);
+      line-height: 1.45;
+    }
+
+
+    .workflow {
+      display: grid;
+      grid-template-columns: repeat(5,1fr);
+      gap: 8px;
+      margin-top: 22px;
+    }
+
+    .workflow button {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 62px;
+      padding: 12px 14px;
+      border-radius: var(--r);
+      border: 1px solid var(--bd-lt);
+      background: var(--sur);
+      cursor: pointer;
+      text-align: left;
+      box-shadow: var(--sh-xs);
+      transition: all .18s;
+      color: var(--ink2);
+    }
+
+    .workflow button:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--sh-md);
+      border-color: rgba(234,88,12,.35);
+    }
+
+    .step-no {
+      flex: 0 0 auto;
+      width: 34px;
+      height: 34px;
+      border-radius: var(--r-sm);
+      background: linear-gradient(135deg, var(--p), var(--p-dk));
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 4px 10px rgba(234,88,12,.38);
+    }
+
+    .workflow strong { display: block; font-size: 13px; font-weight: 800; line-height: 1.25; }
+    .workflow small  { display: block; font-size: 11px; color: var(--mt); margin-top: 1px; }
+
+    .project-card {
+      padding: 28px 26px;
+      border-radius: var(--r-lg);
+      background: linear-gradient(145deg, var(--navy) 0%, #143250 100%);
+      border: 1px solid rgba(255,255,255,.07);
+      box-shadow: var(--sh-xl);
+      color: rgba(255,255,255,.88);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .project-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 5px;
+      background: linear-gradient(180deg, var(--gold), rgba(201,150,58,.35));
+    }
+
+    .project-card::after {
+      content: "";
+      position: absolute;
+      bottom: -48px;
+      right: -48px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.055);
+      pointer-events: none;
+    }
+
+    .project-card > * { position: relative; z-index: 1; }
+
+    .project-card .eyebrow {
+      background: rgba(201,150,58,.20);
+      color: var(--gold);
+    }
+
+    .project-card strong {
+      display: block;
+      font-size: 19px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.28;
+      margin: 14px 0 10px;
+    }
+
+    .project-card p {
+      font-size: 14px;
+      color: rgba(255,255,255,.58);
+      line-height: 1.6;
+      margin-top: 5px;
+    }
+
+    /* ── Hero dark-theme overrides ── */
+    .hero-copy .eyebrow {
+      background: rgba(249,115,22,.20);
+      color: #FED7AA;
+      border: 1px solid rgba(249,115,22,.35);
+    }
+
+    .hero-copy h1 {
+      color: #fff;
+      font-size: clamp(38px, 5vw, 64px);
+      text-shadow: 0 2px 24px rgba(249,115,22,.18);
+    }
+
+    .hero-copy h1 .h1-accent {
+      background: linear-gradient(90deg, #FB923C 0%, #FED7AA 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 0.55em;
+      font-weight: 700;
+      display: block;
+      margin-top: 4px;
+    }
+
+    .hero-copy .lead {
+      color: rgba(255,255,255,.65);
+      max-width: 740px;
+    }
+
+    .hero-copy .hero-stats { margin-top: 28px; gap: 14px; }
+
+    .hero-copy .hero-stat {
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: none;
+      padding: 16px 18px;
+    }
+
+    .hero-copy .hero-stat:nth-child(1) { border-top: 3px solid #F97316; }
+    .hero-copy .hero-stat:nth-child(2) { border-top: 3px solid #F59E0B; }
+    .hero-copy .hero-stat:nth-child(3) { border-top: 3px solid #10B981; }
+
+    .hero-copy .hero-stat:nth-child(1) span { color: #4DD9E5; }
+    .hero-copy .hero-stat:nth-child(2) span { color: #FBBF24; }
+    .hero-copy .hero-stat:nth-child(3) span { color: #34D399; }
+
+    .hero-copy .hero-stat strong { color: #fff; }
+    .hero-copy .hero-stat small  { color: rgba(255,255,255,.52); }
+
+    .workflow-hd {
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.35);
+      margin-top: 32px;
+      margin-bottom: 10px;
+    }
+
+    .hero-copy .workflow { margin-top: 0; gap: 10px; }
+
+    .hero-copy .workflow button {
+      background: rgba(255,255,255,.07);
+      border-color: rgba(255,255,255,.13);
+      color: rgba(255,255,255,.88);
+      min-height: 68px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      padding: 12px 12px;
+    }
+
+    .hero-copy .workflow button:hover {
+      background: rgba(249,115,22,.15);
+      border-color: rgba(249,115,22,.48);
+      box-shadow: 0 8px 24px rgba(249,115,22,.22);
+    }
+
+    .hero-copy .workflow strong { color: #fff; font-size: 12px; }
+    .hero-copy .workflow small  { color: rgba(255,255,255,.50); font-size: 10px; }
+
+    .hero-copy .workflow button:nth-child(1) .step-no {
+      background: linear-gradient(135deg, #F97316, #C2410C);
+      box-shadow: 0 4px 12px rgba(249,115,22,.50);
+    }
+    .hero-copy .workflow button:nth-child(2) .step-no {
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      box-shadow: 0 4px 12px rgba(245,158,11,.45);
+    }
+    .hero-copy .workflow button:nth-child(3) .step-no {
+      background: linear-gradient(135deg, #10B981, #059669);
+      box-shadow: 0 4px 12px rgba(16,185,129,.45);
+    }
+    .hero-copy .workflow button:nth-child(4) .step-no {
+      background: linear-gradient(135deg, #7C3AED, #5B21B6);
+      box-shadow: 0 4px 12px rgba(124,58,237,.45);
+    }
+    .hero-copy .workflow button:nth-child(5) .step-no {
+      background: linear-gradient(135deg, #F43F5E, #BE123C);
+      box-shadow: 0 4px 12px rgba(244,63,94,.42);
+    }
+
+    /* ══════════════════════════════════════
+       SECTIONS
+    ══════════════════════════════════════ */
+    .section { display: none; }
+
+    .section.active {
+      display: block;
+      animation: fadeUp .22s ease-out;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Panel ── */
+    .panel {
+      position: relative;
+      background: var(--sur);
+      border: 1px solid var(--bd-lt);
+      border-radius: var(--r-lg);
+      box-shadow: var(--sh-md);
+      padding: 26px;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--p) 0%, #FDBA74 50%, var(--gold) 100%);
+    }
+
+    .panel > * { position: relative; }
+
+    .panel.soft {
+      background: var(--sur2);
+      box-shadow: var(--sh-xs);
+      border-color: var(--bd-lt);
+    }
+
+    .panel.soft::before { opacity: .45; }
+
+    .panel.parent-access::before {
+      background: linear-gradient(90deg, var(--p) 0%, #22D4C8 60%, var(--gold) 100%);
+    }
+
+    .panel.admin-access::before {
+      background: linear-gradient(90deg, var(--gold) 0%, #F0996B 55%, var(--purple) 100%);
+    }
+
+    .section-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 22px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--bd-lt);
+    }
+
+    .section-head p { margin-top: 6px; color: var(--mt); font-size: 14px; }
+
+    /* ── Grid ── */
+    .grid { display: grid; gap: 16px; }
+    .grid.two   { grid-template-columns: repeat(2,1fr); }
+    .grid.three { grid-template-columns: repeat(3,1fr); }
+    .grid.four  { grid-template-columns: repeat(4,1fr); }
+    .login-grid { grid-template-columns: repeat(2,1fr); }
+
+    /* ── Form ── */
+    .field { display: grid; gap: 7px; min-width: 0; }
+
+    label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink2);
+      display: block;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 14px;
+      border: 1.5px solid var(--bd);
+      border-radius: var(--r);
+      background: var(--sur);
+      color: var(--ink);
+      outline: none;
+      transition: border-color .16s, box-shadow .16s;
+    }
+
+    input::placeholder, textarea::placeholder { color: var(--mt-lt); }
+
+    input:hover,  select:hover,  textarea:hover  { border-color: rgba(234,88,12,.48); }
+    input:focus,  select:focus,  textarea:focus  {
+      border-color: var(--p);
+      box-shadow: var(--ring);
+    }
+
+    textarea { min-height: 96px; resize: vertical; line-height: 1.65; }
+
+    .inline-fields {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .check-line {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      padding: 14px;
+      margin-top: 16px;
+      border-radius: var(--r);
+      border: 1.5px solid var(--bd-lt);
+      background: var(--sur2);
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--ink2);
+      line-height: 1.6;
+    }
+
+    .check-line input, .check input {
+      width: auto;
+      min-height: auto;
+      margin-top: 3px;
+      flex: 0 0 auto;
+      accent-color: var(--p);
+    }
+
+    /* ── Buttons ── */
+    button { cursor: pointer; border: none; background: none; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 10px 22px;
+      border-radius: var(--r);
+      font-size: 14px;
+      font-weight: 800;
+      border: 1.5px solid transparent;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: all .18s;
+      cursor: pointer;
+    }
+
+    .btn:hover  { transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--p), var(--p-dk));
+      color: #fff;
+      box-shadow: 0 4px 18px rgba(234,88,12,.38);
+    }
+    .btn.primary:hover { box-shadow: 0 8px 26px rgba(234,88,12,.46); }
+
+    .btn.secondary {
+      background: var(--p-lt);
+      border-color: rgba(234,88,12,.22);
+      color: var(--p-dk);
+    }
+    .btn.secondary:hover { background: #FFEDD5; border-color: rgba(234,88,12,.42); }
+
+    .btn.ghost {
+      background: transparent;
+      border-color: var(--bd);
+      color: var(--mt);
+    }
+    .btn.ghost:hover { background: var(--sur2); color: var(--ink); }
+
+    .btn.warn {
+      background: linear-gradient(135deg, #D48A25, #B86E10);
+      color: #fff;
+      box-shadow: 0 4px 18px rgba(201,150,58,.38);
+    }
+    .btn.warn:hover { box-shadow: 0 8px 26px rgba(201,150,58,.46); }
+
+    .btn.small { min-height: 32px; padding: 6px 12px; font-size: 12px; }
+
+    /* ── Hint / Alerts ── */
+    .hint { font-size: 12.5px; color: var(--mt); line-height: 1.5; }
+
+    .notice, .danger-note, .success-note {
+      padding: 14px 16px;
+      border-radius: var(--r);
+      border: 1px solid;
+      font-size: 14px;
+      line-height: 1.75;
+      margin: 14px 0;
+    }
+
+    .notice     { background: var(--p-lt);  border-color: rgba(234,88,12,.25);  color: var(--p-dk); }
+    .danger-note{ background: var(--red-lt); border-color: rgba(192,43,54,.25);  color: var(--red);  }
+    .success-note{ background: var(--grn-lt);border-color: rgba(7,126,86,.25);   color: var(--green);}
+
+    /* ── Questions ── */
+    .question-list { display: grid; gap: 12px; }
+
+    /* Button-style question card */
+    .q-card {
+      padding: 16px 18px;
+      border-radius: var(--r);
+      border: 1.5px solid var(--bd-lt);
+      background: var(--sur);
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .q-card:focus-within {
+      border-color: rgba(234,88,12,.40);
+      box-shadow: 0 4px 16px rgba(234,88,12,.08);
+    }
+    .q-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px; height: 22px;
+      background: var(--p);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 800;
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+    .q-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.5;
+      margin: 0 0 12px 0;
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .q-domain {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--mt);
+      background: rgba(0,0,0,.06);
+      padding: 2px 8px;
+      border-radius: 99px;
+      margin-left: 4px;
+    }
+
+    /* Yes/No button pair */
+    .q-btn-row { display: flex; gap: 8px; }
+    .q-opt {
+      flex: 1;
+      padding: 9px 14px;
+      border-radius: 10px;
+      border: 2px solid var(--bd-lt);
+      background: #fff;
+      color: var(--ink2);
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .16s;
+    }
+    .q-opt:hover { border-color: var(--p); color: var(--p); background: var(--p-lt); }
+    .q-opt[data-val="false"].selected {
+      background: #ECFDF5; border-color: #10B981; color: #065F46;
+    }
+    .q-opt[data-val="true"].selected {
+      background: var(--p-lt); border-color: var(--p); color: var(--p-dk);
+      box-shadow: 0 4px 12px rgba(234,88,12,.18);
+    }
+
+    /* Score 1-7 button row */
+    .score-btn-row { display: flex; gap: 5px; }
+    .score-btn {
+      flex: 1;
+      min-width: 0;
+      padding: 8px 2px 7px;
+      border-radius: 9px;
+      border: 2px solid var(--bd-lt);
+      background: #fff;
+      color: var(--ink2);
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      transition: all .16s;
+    }
+    .score-btn span {
+      font-size: 9px;
+      font-weight: 500;
+      color: var(--mt);
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+    .score-btn:hover { border-color: var(--p); color: var(--p); background: var(--p-lt); }
+    .score-btn.selected {
+      background: var(--p); border-color: var(--p); color: #fff;
+      box-shadow: 0 4px 12px rgba(234,88,12,.30);
+    }
+    .score-btn.selected span { color: rgba(255,255,255,.80); }
+
+    /* Legacy .question (keep for fallback) */
+    .question {
+      display: grid;
+      grid-template-columns: 1fr minmax(160px,210px);
+      gap: 14px;
+      align-items: center;
+      padding: 14px;
+      border-radius: var(--r);
+      border: 1.5px solid var(--bd-lt);
+      background: var(--sur);
+    }
+    .question strong {
+      display: block; font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 2px;
+    }
+
+    .check-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+
+    .check {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      padding: 12px;
+      border-radius: var(--r);
+      border: 1.5px solid var(--bd-lt);
+      background: var(--sur);
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--ink2);
+      transition: border-color .15s, box-shadow .15s;
+      line-height: 1.45;
+    }
+
+    .check:hover {
+      border-color: rgba(234,88,12,.35);
+      box-shadow: 0 4px 12px rgba(234,88,12,.08);
+    }
+
+    /* ── Metrics ── */
+    .metric-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+
+    .metric {
+      padding: 18px 18px 16px;
+      border-radius: var(--r-lg);
+      background: var(--sur);
+      border: 1px solid var(--bd-lt);
+      box-shadow: var(--sh-sm);
+      position: relative;
+      overflow: hidden;
+      transition: box-shadow .18s, transform .18s;
+    }
+
+    .metric:hover { transform: translateY(-2px); box-shadow: var(--sh-lg); }
+
+    .metric::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4px;
+      border-radius: 0 2px 2px 0;
+      background: linear-gradient(180deg, var(--p), #FDBA74);
+    }
+
+    .metric:nth-child(2)::before { background: linear-gradient(180deg, var(--gold),  #EFC46E); }
+    .metric:nth-child(3)::before { background: linear-gradient(180deg, var(--red),   #F08B90); }
+    .metric:nth-child(4)::before { background: linear-gradient(180deg, var(--purple),#A07CE8); }
+    .metric:nth-child(5)::before { background: linear-gradient(180deg, var(--green), #4DC594); }
+    .metric:nth-child(6)::before { background: linear-gradient(180deg, var(--sky),   #60B8E8); }
+    .metric:nth-child(7)::before { background: linear-gradient(180deg, #E87030,      #F4A860); }
+    .metric:nth-child(8)::before { background: linear-gradient(180deg, #8B30C0,      #C070F0); }
+    .metric:nth-child(9)::before { background: linear-gradient(180deg, var(--amber),  #E8C46E); }
+
+    .metric span   { font-size: 12px; font-weight: 700; color: var(--mt); letter-spacing: .02em; display: block; }
+    .metric strong { display: block; font-size: 34px; font-weight: 900; color: var(--navy); line-height: 1.1; margin-top: 8px; }
+
+    /* ── Tables ── */
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border-radius: var(--r-lg);
+      border: 1px solid var(--bd-lt);
+      box-shadow: var(--sh-sm);
+      background: var(--sur);
+    }
+
+    table { width: 100%; min-width: 680px; border-collapse: collapse; }
+
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--bd-lt);
+    }
+
+    th {
+      font-size: 11.5px;
+      font-weight: 800;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: var(--mt);
+      background: var(--sur2);
+      white-space: nowrap;
+    }
+
+    td { font-size: 14px; }
+
+    tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: rgba(234,88,12,.04); }
+
+    /* ── Badges ── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: var(--r-f);
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .badge.low      { background: var(--grn-lt); border-color: rgba(7,126,86,.25);   color: var(--green);  }
+    .badge.moderate { background: var(--amb-lt);  border-color: rgba(179,106,0,.25); color: var(--amber);  }
+    .badge.high     { background: var(--red-lt);  border-color: rgba(192,43,54,.25); color: var(--red);    }
+    .badge.urgent   { background: var(--pur-lt);  border-color: rgba(102,52,192,.25);color: var(--purple); }
+    .badge.neutral  { background: var(--sur2);    border-color: var(--bd);            color: var(--mt);     }
+
+    /* ── Result card ── */
+    .result-card {
+      margin-top: 18px;
+      padding: 22px;
+      border-radius: var(--r-lg);
+      border: 1px solid var(--bd-lt);
+      background: var(--sur);
+      box-shadow: var(--sh-sm);
+    }
+
+    .result-card.high, .result-card.urgent {
+      background: linear-gradient(135deg, #fff, var(--red-lt));
+      border-color: rgba(192,43,54,.22);
+    }
+
+    .result-card.moderate {
+      background: linear-gradient(135deg, #fff, var(--amb-lt));
+      border-color: rgba(179,106,0,.22);
+    }
+
+    .result-card.low {
+      background: linear-gradient(135deg, #fff, var(--grn-lt));
+      border-color: rgba(7,126,86,.22);
+    }
+
+    /* ── Admin layout ── */
+    .admin-layout {
+      display: grid;
+      grid-template-columns: minmax(0,.90fr) minmax(0,1.42fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    /* ── Utils ── */
+    .stack  { display: grid; gap: 16px; }
+    .mt     { margin-top: 16px; }
+    .hidden { display: none !important; }
+
+    /* ══════════════════════════════════════
+       COLORFUL LOGIN CARDS
+    ══════════════════════════════════════ */
+
+    /* ── Parent Access Card ── */
+    .panel.parent-access {
+      background: linear-gradient(145deg, #F97316 0%, #EA580C 38%, #7C2D12 100%);
+      border-color: rgba(255,255,255,.16);
+      box-shadow: 0 24px 64px rgba(234,88,12,.45), 0 8px 20px rgba(234,88,12,.28);
+    }
+
+    .panel.parent-access::before {
+      background: linear-gradient(90deg, rgba(255,255,255,.55) 0%, rgba(255,255,255,.18) 100%);
+      height: 4px;
+    }
+
+    /* Decorative bubble */
+    .panel.parent-access::after {
+      content: "";
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.07);
+      pointer-events: none;
+    }
+
+    .panel.parent-access .eyebrow {
+      background: rgba(255,255,255,.22);
+      color: #fff;
+      letter-spacing: .12em;
+    }
+
+    .panel.parent-access h2                { color: #fff; }
+    .panel.parent-access .section-head     { border-bottom-color: rgba(255,255,255,.18); }
+    .panel.parent-access .section-head p   { color: rgba(255,255,255,.82); }
+    .panel.parent-access label             { color: rgba(255,255,255,.92); }
+
+    .panel.parent-access input,
+    .panel.parent-access select {
+      background: rgba(255,255,255,.18);
+      border-color: rgba(255,255,255,.30);
+      color: #fff;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.12);
+    }
+
+    .panel.parent-access input::placeholder { color: rgba(255,255,255,.52); }
+
+    .panel.parent-access input:focus,
+    .panel.parent-access select:focus {
+      background: rgba(255,255,255,.26);
+      border-color: rgba(255,255,255,.70);
+      box-shadow: 0 0 0 3px rgba(255,255,255,.22);
+    }
+
+    /* "ส่ง OTP" button */
+    .panel.parent-access .btn.secondary {
+      background: rgba(255,255,255,.22);
+      border-color: rgba(255,255,255,.40);
+      color: #fff;
+    }
+
+    .panel.parent-access .btn.secondary:hover {
+      background: rgba(255,255,255,.34);
+      border-color: rgba(255,255,255,.60);
+    }
+
+    /* "เข้าสู่ระบบ" button */
+    .panel.parent-access .btn.primary {
+      background: #fff;
+      border-color: transparent;
+      color: var(--p-dk);
+      box-shadow: 0 8px 24px rgba(0,0,0,.18);
+    }
+
+    .panel.parent-access .btn.primary:hover {
+      background: #F0FFFE;
+      box-shadow: 0 14px 36px rgba(0,0,0,.22);
+    }
+
+    .panel.parent-access .notice {
+      background: rgba(255,255,255,.16);
+      border-color: rgba(255,255,255,.26);
+      color: rgba(255,255,255,.92);
+    }
+
+    /* ── Admin Console Card ── */
+    .panel.admin-access {
+      background: linear-gradient(145deg, #7C3AED 0%, #5B21B6 45%, #4338CA 100%);
+      border-color: rgba(255,255,255,.12);
+      box-shadow: 0 24px 64px rgba(124,58,237,.45), 0 8px 20px rgba(124,58,237,.28);
+    }
+
+    .panel.admin-access::before {
+      background: linear-gradient(90deg, #FBBF24 0%, #F97316 50%, #EF4444 100%);
+      height: 4px;
+      opacity: 1;
+    }
+
+    /* Decorative bubble */
+    .panel.admin-access::after {
+      content: "";
+      position: absolute;
+      bottom: -60px;
+      left: -60px;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.06);
+      pointer-events: none;
+    }
+
+    .panel.admin-access .eyebrow {
+      background: rgba(251,191,36,.22);
+      color: #FBBF24;
+      letter-spacing: .12em;
+    }
+
+    .panel.admin-access h2               { color: #fff; }
+    .panel.admin-access .section-head    { border-bottom-color: rgba(255,255,255,.16); }
+    .panel.admin-access .section-head p  { color: rgba(255,255,255,.78); }
+    .panel.admin-access label            { color: rgba(255,255,255,.90); }
+
+    .panel.admin-access input,
+    .panel.admin-access select {
+      background: rgba(255,255,255,.14);
+      border-color: rgba(255,255,255,.26);
+      color: #fff;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.10);
+    }
+
+    .panel.admin-access input::placeholder { color: rgba(255,255,255,.48); }
+
+    .panel.admin-access input:focus,
+    .panel.admin-access select:focus {
+      background: rgba(255,255,255,.22);
+      border-color: rgba(255,255,255,.62);
+      box-shadow: 0 0 0 3px rgba(255,255,255,.20);
+    }
+
+    .panel.admin-access .btn.warn {
+      background: linear-gradient(135deg, #FBBF24 0%, #F97316 55%, #EF4444 100%);
+      box-shadow: 0 8px 28px rgba(249,115,22,.50);
+      font-size: 15px;
+    }
+
+    .panel.admin-access .btn.warn:hover {
+      box-shadow: 0 14px 36px rgba(249,115,22,.60);
+    }
+
+    .panel.admin-access .hint { color: rgba(255,255,255,.55); }
+
+    /* ── Footer ── */
+    .app-footer {
+      background: var(--navy);
+      border-top: 1px solid rgba(255,255,255,.07);
+      margin-top: 0;
+    }
+
+    .app-footer::before {
+      content: "";
+      display: block;
+      height: 3px;
+      background: linear-gradient(90deg,
+        #C9963A 0%, #F0C96B 25%, #C9963A 48%,
+        #FDBA74 68%, #EA580C 100%);
+    }
+
+    .footer-inner {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr 1fr;
+      gap: 32px;
+      align-items: center;
+      padding-top: 28px;
+      padding-bottom: 28px;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .footer-logo {
+      flex: 0 0 auto;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--r-sm);
+      background: linear-gradient(145deg, #FB923C, #9A3412);
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .06em;
+      box-shadow: 0 2px 12px rgba(234,88,12,.45);
+    }
+
+    .footer-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.3;
+    }
+
+    .footer-sub {
+      font-size: 12px;
+      color: rgba(255,255,255,.42);
+      margin-top: 3px;
+    }
+
+    .footer-dev {
+      text-align: center;
+      padding: 20px 24px;
+      border-radius: var(--r-lg);
+      background: linear-gradient(145deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.09);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .footer-dev::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4px;
+      background: linear-gradient(180deg, var(--gold), rgba(201,150,58,.30));
+      border-radius: 0 2px 2px 0;
+    }
+
+    .footer-dev-label {
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+
+    .footer-dev-name {
+      font-size: 17px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.3;
+      margin-bottom: 6px;
+    }
+
+    .footer-dev-info {
+      font-size: 13px;
+      color: rgba(255,255,255,.55);
+      line-height: 1.6;
+    }
+
+    .footer-note {
+      text-align: right;
+      font-size: 12.5px;
+      color: rgba(255,255,255,.36);
+      line-height: 1.75;
+    }
+
+    @media (max-width: 900px) {
+      .footer-inner {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        text-align: center;
+      }
+      .footer-brand { justify-content: center; }
+      .footer-note  { text-align: center; }
+    }
+
+    /* ── Toast ── */
+    #toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      max-width: 400px;
+      padding: 14px 18px;
+      border-radius: var(--r);
+      background: var(--navy);
+      color: rgba(255,255,255,.94);
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.55;
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: var(--sh-xl);
+      display: none;
+      z-index: 999;
+      animation: slideIn .22s ease-out;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ══════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════ */
+    @media (max-width: 1100px) {
+      body[data-view="login"] .hero-stats { grid-template-columns: repeat(3,1fr); }
+      body[data-view="login"] .workflow   { grid-template-columns: repeat(3,1fr); }
+    }
+
+    @media (max-width: 900px) {
+      .hero, .login-grid, .grid.two, .grid.three,
+      .grid.four, .admin-layout { grid-template-columns: 1fr; }
+      .workflow    { grid-template-columns: repeat(2,1fr); }
+      .hero-stats  { grid-template-columns: repeat(2,1fr); }
+      .metric-grid { grid-template-columns: repeat(2,1fr); }
+      .check-grid  { grid-template-columns: repeat(2,1fr); }
+    }
+
+    @media (max-width: 640px) {
+      .wrap { padding-inline: 12px; }
+      .topbar { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .top-actions { width: 100%; }
+      .user-pill { max-width: 100%; }
+      h1 { font-size: 24px; }
+      .hero-copy, .panel { padding: 22px; }
+      .project-card { padding: 20px; }
+      .app-main { padding: 20px 0 44px; }
+      .workflow, .hero-stats { grid-template-columns: 1fr; }
+      .question { grid-template-columns: 1fr; }
+      .check-grid, .metric-grid { grid-template-columns: 1fr; }
+      .inline-fields { grid-template-columns: 1fr; }
+    }
+
+    /* Modern clinical skin overrides */
+    :root {
+      --p: #087F8F;
+      --p-dk: #075E6A;
+      --p-lt: #E8F7F8;
+      --gold: #B98118;
+      --gold-lt: #FFF7E8;
+      --navy: #10263A;
+      --bg: #F5F8FB;
+      --sur: #FFFFFF;
+      --sur2: #F8FBFD;
+      --ink: #172536;
+      --ink2: #31465A;
+      --mt: #657384;
+      --mt-lt: #91A0AE;
+      --bd: #D8E2EA;
+      --bd-lt: #E7EEF4;
+      --green: #0B7A53;
+      --grn-lt: #ECFAF4;
+      --amber: #A86405;
+      --amb-lt: #FFF7E8;
+      --red: #B4232F;
+      --red-lt: #FFF1F2;
+      --purple: #5750A8;
+      --pur-lt: #F2F1FF;
+      --sky: #0369A1;
+      --sky-lt: #EFF8FF;
+      --sh-xs: 0 1px 2px rgba(16, 38, 58, .05);
+      --sh-sm: 0 8px 24px rgba(16, 38, 58, .07);
+      --sh-md: 0 14px 34px rgba(16, 38, 58, .10);
+      --sh-lg: 0 20px 48px rgba(16, 38, 58, .12);
+      --sh-xl: 0 26px 64px rgba(16, 38, 58, .16);
+      --r-sm: 6px;
+      --r: 8px;
+      --r-lg: 10px;
+      --r-xl: 14px;
+      --ring: 0 0 0 3px rgba(8, 127, 143, .18);
+    }
+
+    body {
+      font-size: 14.5px;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, #FAFCFD 0%, #F5F8FB 44%, #EEF6F8 100%);
+    }
+
+    .wrap {
+      width: min(1280px, 100%);
+      padding-inline: 28px;
+    }
+
+    .app-header {
+      background: #064E3B;
+      border-bottom: 1px solid rgba(52,211,153,.18);
+      box-shadow: 0 8px 28px rgba(6,78,59,.28);
+      backdrop-filter: blur(14px);
+    }
+
+    .app-header::before {
+      height: 4px;
+      background: linear-gradient(90deg, #064E3B 0%, #059669 30%, #10B981 58%, #34D399 80%, #A7F3D0 100%);
+    }
+
+    .topbar {
+      min-height: 72px;
+      padding: 12px 0;
+    }
+
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      background: linear-gradient(145deg, #34D399, #064E3B);
+      box-shadow: 0 10px 22px rgba(5,150,105,.30);
+    }
+
+    .brand-title { color: #fff; }
+    .brand-subtitle { color: rgba(255,255,255,.65); }
+    .brand > div { min-width: 0; }
+
+    .user-pill {
+      border-color: var(--bd-lt);
+      background: #F7FBFC;
+      color: var(--ink2);
+      box-shadow: var(--sh-xs);
+    }
+
+    .user-pill::before {
+      background: #10B981;
+      box-shadow: 0 0 0 3px rgba(16,185,129,.16);
+    }
+
+    .tabs {
+      gap: 8px;
+      padding: 0 0 12px;
+    }
+
+    .tabs button {
+      min-height: 38px;
+      border-color: rgba(52,211,153,.22);
+      background: rgba(52,211,153,.10);
+      color: rgba(255,255,255,.72);
+      box-shadow: none;
+    }
+
+    .tabs button:hover {
+      background: rgba(52,211,153,.22);
+      color: #fff;
+    }
+
+    .tabs button.active {
+      background: #10B981;
+      border-color: #059669;
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(16,185,129,.35);
+    }
+
+    .app-main { padding: 24px 0 56px; }
+
+    .app-main,
+    .section,
+    .hero,
+    #login,
+    .grid,
+    .login-grid,
+    .panel,
+    .field,
+    .inline-fields {
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    body[data-view="login"] .app-main {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(420px, 520px);
+      gap: 22px;
+      align-items: start;
+    }
+
+    body[data-view="login"] .hero {
+      margin: 0;
+      position: sticky;
+      top: 96px;
+    }
+
+    body[data-view="login"] .login-grid {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    body[data-view="login"] .workflow { grid-template-columns: 1fr; }
+
+    body[data-view="login"] .hero-stats {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .hero-copy {
+      min-height: calc(100vh - 160px);
+      padding: 38px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #10263A 0%, #0A4655 54%, #0B6B71 100%);
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: 0 22px 52px rgba(16,38,58,.20);
+    }
+
+    .hero-copy::before,
+    .hero-copy::after,
+    .project-card::before,
+    .project-card::after {
+      display: none;
+    }
+
+    h1 {
+      font-size: 42px;
+      line-height: 1.14;
+      letter-spacing: 0;
+      max-width: 780px;
+      overflow-wrap: anywhere;
+    }
+
+    .h1-accent {
+      color: #8FE3E6;
+      -webkit-text-fill-color: currentColor;
+      background: none;
+    }
+
+    .lead {
+      max-width: 720px;
+      color: rgba(255,255,255,.78);
+      overflow-wrap: anywhere;
+    }
+
+    .eyebrow {
+      color: var(--p-dk);
+      letter-spacing: .08em;
+    }
+
+    .hero-copy .eyebrow {
+      display: inline-flex;
+      width: fit-content;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.12);
+      color: #C8F6F6;
+    }
+
+    .hero-stat,
+    .workflow button {
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.075);
+      box-shadow: none;
+      overflow-wrap: anywhere;
+    }
+
+    .workflow button {
+      min-height: 64px;
+      align-items: center;
+    }
+
+    .workflow button:hover {
+      background: rgba(255,255,255,.12);
+      transform: translateY(-1px);
+    }
+
+    .step-no {
+      background: rgba(143,227,230,.18);
+      color: #BDF6F8;
+    }
+
+    .panel {
+      border: 1px solid var(--bd-lt);
+      border-radius: 10px;
+      background: rgba(255,255,255,.96);
+      box-shadow: 0 12px 32px rgba(16,38,58,.08);
+    }
+
+    .panel.soft {
+      background: var(--sur2);
+      border-color: var(--bd-lt);
+      box-shadow: none;
+    }
+
+    .panel.parent-access,
+    .panel.admin-access {
+      color: var(--ink);
+      background: var(--sur);
+      border-color: var(--bd-lt);
+      box-shadow: 0 14px 34px rgba(16,38,58,.10);
+    }
+
+    .panel.parent-access::before,
+    .panel.admin-access::before {
+      content: "";
+      display: block;
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 4px;
+      border-radius: 10px 10px 0 0;
+      background: linear-gradient(90deg, var(--p) 0%, #43C4C8 100%);
+    }
+
+    .panel.admin-access::before {
+      background: linear-gradient(90deg, var(--gold) 0%, #E6B04E 100%);
+    }
+
+    .panel.parent-access::after,
+    .panel.admin-access::after {
+      display: none;
+    }
+
+    .panel.parent-access .eyebrow,
+    .panel.admin-access .eyebrow {
+      background: transparent;
+      color: var(--p-dk);
+      padding: 0;
+    }
+
+    .panel.admin-access .eyebrow { color: var(--amber); }
+
+    .panel.parent-access h2,
+    .panel.admin-access h2,
+    .panel.parent-access label,
+    .panel.admin-access label {
+      color: var(--ink);
+    }
+
+    .panel.parent-access .section-head p,
+    .panel.admin-access .section-head p,
+    .panel.admin-access .hint {
+      color: var(--mt);
+    }
+
+    .section-head {
+      gap: 18px;
+      border-bottom-color: var(--bd-lt);
+    }
+
+    .section-head > * {
+      min-width: 0;
+    }
+
+    h2,
+    h3,
+    p,
+    label,
+    .hint,
+    .notice,
+    .danger-note,
+    .success-note {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    input,
+    select,
+    textarea,
+    .panel.parent-access input,
+    .panel.parent-access select,
+    .panel.admin-access input,
+    .panel.admin-access select {
+      min-height: 44px;
+      border: 1px solid var(--bd);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      box-shadow: inset 0 1px 0 rgba(16,38,58,.03);
+    }
+
+    textarea { min-height: 108px; }
+
+    input::placeholder,
+    .panel.parent-access input::placeholder,
+    .panel.admin-access input::placeholder {
+      color: var(--mt-lt);
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus,
+    .panel.parent-access input:focus,
+    .panel.parent-access select:focus,
+    .panel.admin-access input:focus,
+    .panel.admin-access select:focus {
+      border-color: var(--p);
+      background: #fff;
+      box-shadow: var(--ring);
+      outline: none;
+    }
+
+    .btn {
+      min-height: 42px;
+      border-radius: 8px;
+      font-weight: 800;
+      box-shadow: none;
+    }
+
+    .btn.primary,
+    .panel.parent-access .btn.primary {
+      background: var(--p);
+      border-color: var(--p);
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(8,127,143,.18);
+    }
+
+    .btn.primary:hover,
+    .panel.parent-access .btn.primary:hover {
+      background: var(--p-dk);
+      transform: translateY(-1px);
+    }
+
+    .btn.secondary,
+    .panel.parent-access .btn.secondary {
+      background: var(--p-lt);
+      border-color: rgba(8,127,143,.18);
+      color: var(--p-dk);
+    }
+
+    .btn.secondary:hover,
+    .panel.parent-access .btn.secondary:hover {
+      background: #D9F1F3;
+    }
+
+    .btn.warn,
+    .panel.admin-access .btn.warn {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(185,129,24,.18);
+    }
+
+    .btn.warn:hover,
+    .panel.admin-access .btn.warn:hover {
+      background: #9D6B14;
+      transform: translateY(-1px);
+    }
+
+    .btn.ghost:hover {
+      background: var(--sur2);
+      color: var(--p-dk);
+    }
+
+    .notice,
+    .danger-note,
+    .success-note {
+      border-radius: 8px;
+    }
+
+    .panel.parent-access .notice {
+      background: var(--p-lt);
+      border-color: rgba(8,127,143,.18);
+      color: var(--p-dk);
+      margin-bottom: 0;
+    }
+
+    .question,
+    .check,
+    .check-line {
+      border-radius: 8px;
+      border-color: var(--bd-lt);
+      background: #fff;
+    }
+
+    .question {
+      grid-template-columns: minmax(0, 1fr) 190px;
+      align-items: center;
+    }
+
+    .check:hover,
+    .question:hover {
+      border-color: rgba(8,127,143,.28);
+      box-shadow: var(--sh-xs);
+    }
+
+    .metric-grid {
+      gap: 12px;
+    }
+
+    .metric {
+      border-radius: 8px;
+      border-color: var(--bd-lt);
+      background: #fff;
+      box-shadow: none;
+      min-height: 92px;
+    }
+
+    .metric::before {
+      width: 4px;
+      border-radius: 8px 0 0 8px;
+    }
+
+    .metric span {
+      color: var(--mt);
+      font-weight: 750;
+    }
+
+    .metric strong {
+      color: var(--ink);
+    }
+
+    .table-wrap {
+      border-radius: 8px;
+      border: 1px solid var(--bd-lt);
+      background: #fff;
+      box-shadow: none;
+    }
+
+    table {
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #EEF8FA;
+      color: #0E4F59;
+    }
+
+    th,
+    td {
+      padding: 12px 14px;
+      border-bottom-color: var(--bd-lt);
+    }
+
+    tbody tr:hover td {
+      background: #F8FCFC;
+    }
+
+    .badge {
+      border-radius: 999px;
+      font-weight: 800;
+    }
+
+    .result-card {
+      border-radius: 10px;
+      box-shadow: none;
+    }
+
+    .admin-layout {
+      gap: 18px;
+      align-items: start;
+    }
+
+    .app-footer {
+      background: #10263A;
+      border-top: 4px solid #087F8F;
+    }
+
+    .footer-dev {
+      border-radius: 10px;
+      background: rgba(255,255,255,.06);
+    }
+
+    #toast {
+      border-radius: 10px;
+      background: #10263A;
+      box-shadow: 0 20px 48px rgba(16,38,58,.24);
+    }
+
+    @media (max-width: 1100px) {
+      body[data-view="login"] .app-main {
+        grid-template-columns: 1fr;
+      }
+
+      body[data-view="login"] .hero {
+        position: static;
+      }
+
+      .hero-copy {
+        min-height: auto;
+      }
+
+      body[data-view="login"] .login-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      body[data-view="login"] .workflow {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .wrap { padding-inline: 16px; }
+      .topbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .brand { align-items: flex-start; }
+      .top-actions { justify-content: stretch; }
+      .user-pill,
+      .top-actions .btn { width: 100%; justify-content: center; }
+      h1 { font-size: 28px; }
+      .hero-copy,
+      .panel {
+        padding: 22px;
+      }
+      body[data-view="login"] #login { order: 1; }
+      body[data-view="login"] .hero { order: 2; }
+      body[data-view="login"] .app-main {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      body[data-view="login"] #login,
+      body[data-view="login"] .login-grid,
+      body[data-view="login"] .panel {
+        width: 100%;
+      }
+      .hero-copy { min-height: auto; }
+      .inline-fields {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .btn {
+        white-space: normal;
+        text-align: center;
+      }
+      body[data-view="login"] .login-grid,
+      body[data-view="login"] .hero-stats,
+      body[data-view="login"] .workflow {
+        grid-template-columns: 1fr;
+      }
+      .question {
+        grid-template-columns: 1fr;
+      }
+      .section-head {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .section-head .btn {
+        width: 100%;
+      }
+    }
+
+    /* Login page with background photo */
+    body[data-view="login"] {
+      position: relative;
+      background: #0B2233;
+    }
+
+    body[data-view="login"]::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        linear-gradient(180deg, rgba(8,24,36,.34) 0%, rgba(8,24,36,.20) 42%, rgba(245,248,251,.94) 86%),
+        linear-gradient(90deg, rgba(7,94,106,.42) 0%, rgba(7,94,106,.18) 44%, rgba(16,38,58,.05) 100%),
+        url("https://images.unsplash.com/photo-1496174742515-d2146dcf8e80?auto=format&fit=crop&fm=jpg&q=80&w=2200");
+      background-size: cover;
+      background-position: center 42%;
+    }
+
+    body[data-view="login"]::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-image: radial-gradient(circle at 20% 18%, rgba(99,216,221,.20), transparent 30%);
+      pointer-events: none;
+    }
+
+    body[data-view="login"] .app-header {
+      background: rgba(255,255,255,.86);
+      backdrop-filter: blur(18px);
+    }
+
+    body[data-view="login"] .app-main {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 22px;
+      min-height: calc(100vh - 80px);
+      padding-top: 28px;
+    }
+
+    body[data-view="login"] .hero {
+      position: static;
+      margin: 0;
+      order: 2;
+    }
+
+    body[data-view="login"] #login {
+      order: 1;
+      display: block;
+    }
+
+    body[data-view="login"] .hero-copy {
+      width: min(980px, 100%);
+      min-height: 0;
+      margin-inline: auto;
+      padding: 42px;
+      border-radius: 14px;
+      background:
+        linear-gradient(135deg, rgba(8,28,42,.88) 0%, rgba(8,74,84,.74) 58%, rgba(8,54,62,.80) 100%),
+        url("https://images.unsplash.com/photo-1496174742515-d2146dcf8e80?auto=format&fit=crop&fm=jpg&q=80&w=1800");
+      background-size: cover;
+      background-position: center 45%;
+      border: 1px solid rgba(255,255,255,.20);
+      box-shadow: 0 26px 70px rgba(8,24,36,.28);
+      backdrop-filter: blur(10px);
+      text-align: center;
+    }
+
+    body[data-view="login"] .hero-copy .eyebrow {
+      margin-inline: auto;
+      background: rgba(255,255,255,.14);
+    }
+
+    body[data-view="login"] h1 {
+      max-width: 820px;
+      margin-inline: auto;
+      font-size: clamp(38px, 5vw, 64px);
+    }
+
+    body[data-view="login"] .lead {
+      max-width: 760px;
+      margin-inline: auto;
+      color: rgba(255,255,255,.82);
+    }
+
+    body[data-view="login"] .hero-stats {
+      max-width: 820px;
+      margin-inline: auto;
+    }
+
+    body[data-view="login"] .workflow {
+      max-width: 920px;
+      margin-inline: auto;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    body[data-view="login"] .workflow button {
+      min-height: 104px;
+      align-items: flex-start;
+      flex-direction: column;
+      text-align: left;
+    }
+
+    body[data-view="login"] .login-grid {
+      width: min(840px, 100%);
+      margin: 0 auto 12px;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+      align-items: stretch;
+      padding: 10px;
+      border-radius: 16px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.90), rgba(255,255,255,.76)),
+        url("https://images.unsplash.com/photo-1496174742515-d2146dcf8e80?auto=format&fit=crop&fm=jpg&q=80&w=1400");
+      background-size: cover;
+      background-position: center 54%;
+      border: 1px solid rgba(255,255,255,.72);
+      box-shadow: 0 28px 72px rgba(16,38,58,.22);
+      backdrop-filter: blur(16px);
+    }
+
+    body[data-view="login"] #login::before {
+      content: "เข้าสู่ระบบเพื่อเริ่มคัดกรอง";
+      display: block;
+      width: min(840px, 100%);
+      margin: 0 auto 12px;
+      color: #fff;
+      font-size: clamp(38px, 5vw, 64px);
+      font-weight: 900;
+      line-height: 1.14;
+      text-shadow: 0 18px 40px rgba(8,24,36,.42);
+      text-align: center;
+    }
+
+    body[data-view="login"] #login::after {
+      content: "ระบบคัดกรองเด็กนอนกรนออนไลน์ พร้อมแบบประเมิน OSA-18 วิดีโอการนอน และ dashboard ติดตามผล";
+      display: block;
+      width: min(760px, 100%);
+      margin: 12px auto 0;
+      color: rgba(255,255,255,.86);
+      font-size: 15px;
+      line-height: 1.75;
+      text-align: center;
+      text-shadow: 0 10px 28px rgba(8,24,36,.34);
+    }
+
+    body[data-view="login"] .panel.parent-access,
+    body[data-view="login"] .panel.admin-access {
+      background: rgba(255,255,255,.88);
+      border-color: rgba(255,255,255,.62);
+      box-shadow: none;
+      backdrop-filter: blur(12px);
+      border-radius: 12px;
+    }
+
+    body[data-view="login"] .panel.parent-access {
+      min-height: 0;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      border-bottom-color: var(--bd-lt);
+    }
+
+    body[data-view="login"] .panel.admin-access {
+      min-height: 0;
+      margin-top: 10px;
+    }
+
+    body[data-view="login"] .hero-copy {
+      padding: 30px;
+    }
+
+    body[data-view="login"] .hero-copy h1 {
+      font-size: clamp(20px, 2.2vw, 30px);
+    }
+
+    body[data-view="login"] .panel.parent-access .section-head,
+    body[data-view="login"] .panel.admin-access .section-head {
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+    }
+
+    body[data-view="login"] .panel.parent-access .notice {
+      background: rgba(232,247,248,.92);
+    }
+
+    @media (max-width: 1100px) {
+      body[data-view="login"] .workflow {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      body[data-view="login"] .login-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      body[data-view="login"]::before {
+        background-position: 56% center;
+      }
+
+      body[data-view="login"] .app-main {
+        padding-top: 18px;
+        gap: 16px;
+      }
+
+      body[data-view="login"] .hero {
+        order: 2;
+      }
+
+      body[data-view="login"] #login {
+        order: 1;
+      }
+
+      body[data-view="login"] .hero-copy {
+        padding: 24px;
+        text-align: left;
+      }
+
+      body[data-view="login"] #login::before,
+      body[data-view="login"] #login::after {
+        text-align: left;
+      }
+
+      body[data-view="login"] .hero-copy .eyebrow,
+      body[data-view="login"] h1,
+      body[data-view="login"] .lead {
+        margin-inline: 0;
+      }
+
+      body[data-view="login"] .hero-stats,
+      body[data-view="login"] .workflow,
+      body[data-view="login"] .login-grid {
+        grid-template-columns: 1fr;
+      }
+
+      body[data-view="login"] .workflow button {
+        min-height: 68px;
+        flex-direction: row;
+        align-items: center;
+      }
+    }
+
+    /* ══ Hero Decorative Images ══ */
+    .hero-deco {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      border-radius: inherit;
+      z-index: 0;
+    }
+    .hero-deco > * { position: relative; z-index: 1; }
+    .hero-deco-img {
+      position: absolute;
+      object-fit: cover;
+    }
+    .hero-deco-main {
+      right: -10px;
+      bottom: -10px;
+      width: clamp(220px, 34%, 400px);
+      height: clamp(260px, 52%, 460px);
+      border-radius: 20px 0 0 0;
+      opacity: .28;
+      mask-image: linear-gradient(135deg, transparent 8%, black 52%);
+      -webkit-mask-image: linear-gradient(135deg, transparent 8%, black 52%);
+    }
+    .hero-deco-accent {
+      right: clamp(155px, 24%, 340px);
+      bottom: 20px;
+      width: clamp(90px, 12%, 150px);
+      height: clamp(90px, 12%, 150px);
+      border-radius: 50%;
+      opacity: .18;
+      mask-image: radial-gradient(circle, black 50%, transparent 80%);
+      -webkit-mask-image: radial-gradient(circle, black 50%, transparent 80%);
+    }
+
+/* ══ Hero CTA Buttons ══ */
+    .hero-cta {
+      display: flex;
+      gap: 10px;
+      margin-top: 32px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .hero-btn-parent {
+      padding: 11px 22px;
+      font-size: 13px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #F97316 0%, #C2410C 100%);
+      color: #fff;
+      border: none;
+      border-radius: var(--r);
+      box-shadow: 0 6px 18px rgba(249,115,22,.42);
+      cursor: pointer;
+      transition: all .18s;
+      letter-spacing: .01em;
+    }
+    .hero-btn-parent:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(249,115,22,.58);
+    }
+    .hero-btn-admin {
+      padding: 11px 20px;
+      font-size: 13px;
+      font-weight: 700;
+      background: rgba(255,255,255,.10);
+      color: rgba(255,255,255,.86);
+      border: 1px solid rgba(255,255,255,.26);
+      border-radius: var(--r);
+      cursor: pointer;
+      transition: all .18s;
+    }
+    .hero-btn-admin:hover {
+      background: rgba(255,255,255,.18);
+      border-color: rgba(255,255,255,.42);
+      transform: translateY(-2px);
+    }
+
+    /* ══ Login Modal ══ */
+    body[data-view="login"] #login { display: none; }
+    body.login-modal-open { overflow: hidden; }
+    body.login-modal-open #login {
+      display: flex !important;
+      position: fixed;
+      inset: 0;
+      z-index: 950;
+      background: linear-gradient(140deg, rgba(234,88,12,.90) 0%, rgba(120,40,0,.88) 100%);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      animation: modalFadeIn .22s ease;
+    }
+
+    /* แสดงเฉพาะ panel ที่เลือก */
+    body.login-modal-open #login[data-tab="parent"] .panel.admin-access { display: none; }
+    body.login-modal-open #login[data-tab="admin"]  .panel.parent-access { display: none; }
+    body.login-modal-open #login::before,
+    body.login-modal-open #login::after { display: none !important; }
+    body.login-modal-open .login-grid {
+      background: transparent !important;
+      box-shadow: none !important;
+      border: none !important;
+      padding: 0 !important;
+    }
+
+    .modal-inner {
+      position: relative;
+      width: min(520px, 100%);
+      animation: modalSlideUp .28s cubic-bezier(.22,.68,0,1.2);
+    }
+    .modal-close-btn {
+      position: absolute;
+      top: -16px;
+      right: -16px;
+      z-index: 10;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.30);
+      color: rgba(255,255,255,.92);
+      font-size: 18px;
+      font-weight: 300;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .18s;
+      line-height: 1;
+    }
+    .modal-close-btn:hover {
+      background: rgba(255,255,255,.28);
+      transform: scale(1.12);
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes modalSlideUp {
+      from { opacity: 0; transform: translateY(32px) scale(.95); }
+      to   { opacity: 1; transform: translateY(0)   scale(1);   }
+    }
+
+    /* ══════════════════════════════════════
+       PINK THEME — BRIGHT & VIBRANT
+    ══════════════════════════════════════ */
+    :root {
+      --p:    #E91E8C;
+      --p-dk: #C2185B;
+      --p-lt: #FCE4EC;
+      --ring: 0 0 0 3px rgba(233,30,140,.22);
+    }
+
+    /* Global background — vibrant pink */
+    body {
+      background: linear-gradient(160deg, #FFDDE9 0%, #FFB6CC 44%, #FF8FAF 100%);
+    }
+
+    /* ── Header ── */
+    .app-header {
+      background: rgba(255,255,255,.92);
+    }
+    .app-header::before {
+      background: linear-gradient(90deg, #C2185B 0%, #E91E8C 48%, #F48FB1 100%);
+    }
+    .brand-mark {
+      background: linear-gradient(135deg, #E91E8C, #C2185B);
+      box-shadow: 0 10px 22px rgba(233,30,140,.32);
+    }
+
+    /* ── Login page ── */
+    body[data-view="login"] { background: #C2185B; }
+
+    body[data-view="login"]::before {
+      background:
+        linear-gradient(180deg, rgba(180,20,80,.55) 0%, rgba(220,30,100,.35) 42%, rgba(255,182,210,.82) 85%),
+        linear-gradient(90deg, rgba(255,80,150,.45) 0%, rgba(200,24,80,.22) 52%, transparent 100%),
+        url("https://images.unsplash.com/photo-1496174742515-d2146dcf8e80?auto=format&fit=crop&fm=jpg&q=80&w=2200");
+      background-size: cover;
+      background-position: center 42%;
+    }
+    body[data-view="login"]::after {
+      background-image: radial-gradient(circle at 22% 18%, rgba(255,150,200,.42), transparent 40%);
+    }
+
+    /* ── Hero card — BRIGHT vibrant pink (force override) ── */
+    .hero-copy {
+      background:
+        radial-gradient(ellipse at 88% 12%, rgba(255,255,255,.28) 0%, transparent 42%),
+        radial-gradient(ellipse at 10% 90%, rgba(140,5,55,.45)    0%, transparent 48%),
+        linear-gradient(148deg, #C2185B 0%, #E91E8C 50%, #FF4DA6 100%) !important;
+      box-shadow: 0 28px 72px rgba(190,24,91,.50), 0 8px 24px rgba(190,24,91,.30),
+                  inset 0 1px 0 rgba(255,255,255,.22) !important;
+    }
+
+    /* Dot pattern brighter on pink bg */
+    .hero-copy::after {
+      background-image: radial-gradient(circle, rgba(255,255,255,.10) 1px, transparent 1px) !important;
+    }
+
+    /* Hero top stripe — glowing */
+    .hero-copy::before {
+      background: linear-gradient(90deg, #FFD6EA 0%, #FF80AB 30%, #FF4DA6 65%, #E91E8C 100%) !important;
+      height: 5px;
+    }
+
+    /* Eyebrow badge */
+    .hero-copy .eyebrow {
+      background: rgba(255,255,255,.18);
+      color: #FFD6EA;
+      border-color: rgba(255,255,255,.30);
+    }
+
+    /* H1 — bright, high contrast */
+    .hero-copy h1 {
+      text-shadow: 0 2px 32px rgba(255,100,160,.35);
+    }
+    .hero-copy h1 .h1-accent {
+      background: none !important;
+      -webkit-background-clip: initial !important;
+      background-clip: initial !important;
+      -webkit-text-fill-color: #FFB3D1 !important;
+      color: #FFB3D1;
+    }
+
+    /* Lead text — brighter */
+    .hero-copy .lead { color: rgba(255,255,255,.80); }
+
+    /* Stat cards — glowing borders */
+    .hero-copy .hero-stat {
+      background: rgba(255,255,255,.12);
+      border-color: rgba(255,255,255,.18);
+    }
+    .hero-copy .hero-stat:nth-child(1) { border-top: 3px solid #FF80AB; }
+    .hero-copy .hero-stat:nth-child(2) { border-top: 3px solid #F48FB1; }
+    .hero-copy .hero-stat:nth-child(3) { border-top: 3px solid #FFAFD5; }
+    .hero-copy .hero-stat:nth-child(1) span { color: #FFB3D1; }
+    .hero-copy .hero-stat:nth-child(2) span { color: #F8BBD0; }
+    .hero-copy .hero-stat:nth-child(3) span { color: #FFCCDF; }
+
+    /* workflow-hd */
+    .workflow-hd { color: rgba(255,255,255,.50); }
+
+    /* Workflow buttons — brighter glass */
+    .hero-copy .workflow button {
+      background: rgba(255,255,255,.10);
+      border-color: rgba(255,255,255,.18);
+    }
+    .hero-copy .workflow button:hover {
+      background: rgba(255,255,255,.22);
+      border-color: rgba(255,255,255,.45);
+      box-shadow: 0 8px 24px rgba(233,30,140,.32);
+    }
+
+    /* Workflow step badges — bright pink family */
+    .hero-copy .workflow button:nth-child(1) .step-no {
+      background: linear-gradient(135deg, #FF80AB, #E91E8C);
+      box-shadow: 0 4px 14px rgba(255,128,171,.60);
+    }
+    .hero-copy .workflow button:nth-child(2) .step-no {
+      background: linear-gradient(135deg, #F06292, #C2185B);
+      box-shadow: 0 4px 14px rgba(240,98,146,.58);
+    }
+    .hero-copy .workflow button:nth-child(3) .step-no {
+      background: linear-gradient(135deg, #E040FB, #AB47BC);
+      box-shadow: 0 4px 14px rgba(224,64,251,.55);
+    }
+    .hero-copy .workflow button:nth-child(4) .step-no {
+      background: linear-gradient(135deg, #BA68C8, #8E24AA);
+      box-shadow: 0 4px 14px rgba(186,104,200,.52);
+    }
+    .hero-copy .workflow button:nth-child(5) .step-no {
+      background: linear-gradient(135deg, #FF7043, #E53935);
+      box-shadow: 0 4px 14px rgba(255,112,67,.52);
+    }
+
+    /* CTA buttons — vibrant */
+    .hero-btn-parent {
+      background: linear-gradient(135deg, #FF4DA6 0%, #C2185B 100%);
+      box-shadow: 0 6px 20px rgba(255,77,166,.50);
+    }
+    .hero-btn-parent:hover {
+      box-shadow: 0 12px 32px rgba(255,77,166,.70);
+    }
+    .hero-btn-admin {
+      background: rgba(255,255,255,.16);
+      border-color: rgba(255,255,255,.35);
+      color: #fff;
+    }
+    .hero-btn-admin:hover {
+      background: rgba(255,255,255,.26);
+      border-color: rgba(255,255,255,.55);
+    }
+
+    /* Login modal overlay */
+    body.login-modal-open #login {
+      background: linear-gradient(140deg, rgba(220,30,100,.92) 0%, rgba(100,5,46,.90) 100%);
+    }
+
+    /* Final polished clinical theme */
+    :root {
+      --p: #067A86;
+      --p-dk: #045D66;
+      --p-lt: #E7F6F7;
+      --gold: #B7851D;
+      --gold-lt: #FFF6E4;
+      --navy: #0E2336;
+      --bg: #F4F8FA;
+      --sur: #FFFFFF;
+      --sur2: #F7FBFC;
+      --ink: #182838;
+      --ink2: #32495D;
+      --mt: #64758A;
+      --mt-lt: #9AA8B4;
+      --bd: #D5E1EA;
+      --bd-lt: #E7EEF3;
+      --green: #0B7A53;
+      --grn-lt: #ECFAF4;
+      --amber: #A86405;
+      --amb-lt: #FFF7E8;
+      --red: #B4232F;
+      --red-lt: #FFF1F2;
+      --purple: #5750A8;
+      --pur-lt: #F2F1FF;
+      --sky: #0369A1;
+      --sky-lt: #EFF8FF;
+      --sh-xs: 0 1px 2px rgba(14, 35, 54, .05);
+      --sh-sm: 0 8px 24px rgba(14, 35, 54, .07);
+      --sh-md: 0 16px 38px rgba(14, 35, 54, .10);
+      --sh-lg: 0 24px 58px rgba(14, 35, 54, .13);
+      --sh-xl: 0 28px 70px rgba(14, 35, 54, .18);
+      --r-sm: 6px;
+      --r: 8px;
+      --r-lg: 8px;
+      --r-xl: 8px;
+      --ring: 0 0 0 3px rgba(6, 122, 134, .18);
+    }
+
+    html { background: var(--bg); }
+
+    body {
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, #FBFDFE 0%, #F5F9FB 46%, #EEF6F7 100%) !important;
+      letter-spacing: 0;
+    }
+
+    .eyebrow,
+    .brand-mark,
+    .hero-btn-parent,
+    .hero-btn-admin,
+    .btn,
+    .tabs button,
+    .metric span,
+    .hero-stat span,
+    .workflow-hd {
+      letter-spacing: 0 !important;
+    }
+
+    .wrap {
+      width: min(1280px, 100%);
+      padding-inline: clamp(16px, 3vw, 32px);
+    }
+
+    .app-header {
+      background: rgba(255,255,255,.92) !important;
+      border-bottom: 1px solid rgba(213,225,234,.76);
+      box-shadow: 0 10px 30px rgba(14,35,54,.07);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .app-header::before {
+      height: 4px;
+      background: linear-gradient(90deg, #067A86 0%, #39B8C0 48%, #B7851D 100%) !important;
+    }
+
+    .topbar {
+      min-height: 72px;
+      padding-block: 12px;
+    }
+
+    .brand {
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 62px;
+      height: 62px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #FB923C, #C2410C) !important;
+      box-shadow: 0 12px 24px rgba(234,88,12,.22);
+    }
+
+    .brand-title {
+      color: var(--ink);
+      font-size: 22px;
+      overflow-wrap: anywhere;
+    }
+
+    .brand-subtitle {
+      color: var(--mt);
+      font-size: 15px;
+    }
+
+    .user-pill {
+      border-color: var(--bd-lt);
+      background: #F7FBFC;
+      color: var(--ink2);
+      box-shadow: var(--sh-xs);
+    }
+
+    .tabs {
+      gap: 8px;
+      padding-bottom: 12px;
+    }
+
+    .tabs button {
+      min-height: 38px;
+      border-color: var(--bd-lt);
+      background: #F7FBFC;
+      color: var(--mt);
+      box-shadow: var(--sh-xs);
+    }
+
+    .tabs button:hover {
+      background: #EDF8FA;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .tabs button.active {
+      background: var(--p) !important;
+      border-color: var(--p) !important;
+      color: #fff;
+      box-shadow: 0 12px 26px rgba(6,122,134,.23);
+    }
+
+    .app-main {
+      padding-block: clamp(18px, 3vw, 34px) 56px;
+    }
+
+    .app-main,
+    .section,
+    .hero,
+    #login,
+    .grid,
+    .login-grid,
+    .panel,
+    .field,
+    .inline-fields,
+    .table-wrap {
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    body[data-view="login"] {
+      position: relative;
+      background: #0B1F31 !important;
+      isolation: isolate;
+    }
+
+    body[data-view="login"]::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        linear-gradient(90deg, rgba(7,28,44,.88) 0%, rgba(7,52,62,.70) 52%, rgba(246,250,251,.28) 100%),
+        linear-gradient(180deg, rgba(7,28,44,.24) 0%, rgba(7,28,44,.10) 52%, rgba(244,248,250,.96) 100%),
+        url("https://images.unsplash.com/photo-1496174742515-d2146dcf8e80?auto=format&fit=crop&fm=jpg&q=84&w=2200") !important;
+      background-size: cover;
+      background-position: center 44%;
+    }
+
+    body[data-view="login"]::after {
+      display: none !important;
+      content: none !important;
+    }
+
+    body[data-view="login"] .app-main {
+      display: grid !important;
+      grid-template-columns: minmax(0, 1.12fr) minmax(360px, 440px);
+      gap: clamp(18px, 3vw, 34px);
+      align-items: start;
+      min-height: calc(100vh - 80px);
+    }
+
+    body[data-view="login"] .hero {
+      display: block;
+      order: 1;
+      margin: 0;
+      position: static;
+    }
+
+    body[data-view="login"] .hero-copy {
+      min-height: calc(100vh - 140px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: clamp(18px, 4vw, 46px);
+      border: 0;
+      border-radius: 0;
+      background: transparent !important;
+      box-shadow: none !important;
+      text-align: left;
+      backdrop-filter: none;
+    }
+
+    .hero-copy::before,
+    .hero-copy::after {
+      display: none !important;
+      content: none !important;
+    }
+
+    body[data-view="login"] .hero-copy .eyebrow {
+      width: fit-content;
+      margin: 0 0 14px;
+      padding: 6px 12px;
+      border: 1px solid rgba(185,227,230,.42);
+      border-radius: 999px;
+      background: rgba(255,255,255,.12) !important;
+      color: #D7FAFB !important;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    body[data-view="login"] h1,
+    body[data-view="login"] .hero-copy h1 {
+      max-width: 820px;
+      margin: 0;
+      color: #fff;
+      font-size: clamp(38px, 5vw, 64px);
+      line-height: 1.1;
+      text-shadow: 0 18px 40px rgba(5,18,30,.42);
+      overflow-wrap: anywhere;
+    }
+
+    body[data-view="login"] .hero-copy h1 .h1-accent,
+    body[data-view="login"] .h1-accent {
+      color: #9BE5E8 !important;
+      -webkit-text-fill-color: currentColor !important;
+      background: none !important;
+    }
+
+    body[data-view="login"] .lead {
+      max-width: 780px;
+      margin: 18px 0 0;
+      color: rgba(255,255,255,.84) !important;
+      font-size: 16px;
+      line-height: 1.82;
+      text-shadow: 0 12px 28px rgba(5,18,30,.30);
+    }
+
+    body[data-view="login"] .hero-stats {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    body[data-view="login"] .hero-stat {
+      min-height: 126px;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.20) !important;
+      background: rgba(255,255,255,.12) !important;
+      box-shadow: none;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    body[data-view="login"] .hero-stat span {
+      color: #9BE5E8 !important;
+      font-size: 11px;
+    }
+
+    body[data-view="login"] .hero-stat strong {
+      color: #fff;
+    }
+
+    body[data-view="login"] .hero-stat small {
+      color: rgba(255,255,255,.68);
+    }
+
+    body[data-view="login"] .workflow-hd {
+      margin-top: 28px;
+      margin-bottom: 10px;
+      color: rgba(255,255,255,.68) !important;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    body[data-view="login"] .workflow {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 0;
+    }
+
+    body[data-view="login"] .workflow button {
+      min-height: 104px;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 9px;
+      padding: 13px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.18) !important;
+      background: rgba(255,255,255,.10) !important;
+      color: rgba(255,255,255,.90);
+      box-shadow: none;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    body[data-view="login"] .workflow button:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,.16) !important;
+      border-color: rgba(155,229,232,.48) !important;
+      box-shadow: 0 14px 30px rgba(5,18,30,.18);
+    }
+
+    body[data-view="login"] .workflow strong {
+      color: #fff;
+      font-size: 12px;
+    }
+
+    body[data-view="login"] .workflow small {
+      color: rgba(255,255,255,.66);
+      font-size: 11px;
+    }
+
+    body[data-view="login"] .step-no,
+    body[data-view="login"] .hero-copy .workflow button .step-no {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: rgba(155,229,232,.20) !important;
+      color: #D7FAFB;
+      box-shadow: inset 0 0 0 1px rgba(155,229,232,.26) !important;
+    }
+
+    .hero-cta {
+      justify-content: flex-start;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .hero-btn-parent,
+    .hero-btn-admin {
+      min-height: 46px;
+      padding: 11px 18px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .hero-btn-parent {
+      background: linear-gradient(135deg, #078F9D, #045D66) !important;
+      box-shadow: 0 16px 32px rgba(5,18,30,.25) !important;
+    }
+
+    .hero-btn-parent:hover,
+    .hero-btn-admin:hover {
+      transform: translateY(-2px);
+    }
+
+    .hero-btn-admin {
+      background: rgba(255,255,255,.12) !important;
+      border: 1px solid rgba(255,255,255,.28) !important;
+      color: #fff !important;
+    }
+
+    body[data-view="login"]:not(.login-modal-open) #login {
+      display: block !important;
+      order: 2;
+      align-self: start;
+      position: sticky;
+      top: 94px;
+      z-index: 2;
+    }
+
+    body[data-view="login"]:not(.login-modal-open) #login::before,
+    body[data-view="login"]:not(.login-modal-open) #login::after {
+      display: none !important;
+      content: none !important;
+    }
+
+    body[data-view="login"]:not(.login-modal-open) .modal-inner {
+      width: 100%;
+      position: relative;
+      animation: none;
+    }
+
+    body[data-view="login"]:not(.login-modal-open) .modal-close-btn {
+      display: none !important;
+    }
+
+    body[data-view="login"]:not(.login-modal-open) .login-grid {
+      width: 100%;
+      margin: 0;
+      padding: 10px;
+      gap: 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.62);
+      background: rgba(255,255,255,.90) !important;
+      box-shadow: 0 28px 72px rgba(5,18,30,.26) !important;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      position: relative;
+      z-index: 3;
+    }
+
+    .panel {
+      border: 1px solid var(--bd-lt);
+      border-radius: 8px !important;
+      background: var(--sur);
+      box-shadow: 0 14px 34px rgba(14,35,54,.08);
+      overflow: hidden;
+    }
+
+    .panel::before {
+      height: 4px;
+      background: linear-gradient(90deg, var(--p), #44BFC8, var(--gold));
+    }
+
+    .panel.soft {
+      background: var(--sur2);
+      box-shadow: none;
+    }
+
+    .panel.parent-access,
+    .panel.admin-access,
+    body[data-view="login"] .panel.parent-access,
+    body[data-view="login"] .panel.admin-access {
+      min-height: 0;
+      padding: 22px;
+      color: var(--ink);
+      border-color: rgba(255,255,255,.72);
+      background: #fff !important;
+      box-shadow: none;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .panel.parent-access::before,
+    body[data-view="login"] .panel.parent-access::before {
+      background: linear-gradient(90deg, #067A86 0%, #40BBC3 100%) !important;
+    }
+
+    .panel.admin-access::before,
+    body[data-view="login"] .panel.admin-access::before {
+      background: linear-gradient(90deg, #B7851D 0%, #E4B24F 100%) !important;
+    }
+
+    .panel.parent-access::after,
+    .panel.admin-access::after {
+      display: none !important;
+      content: none !important;
+    }
+
+    .section-head {
+      gap: 16px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom-color: var(--bd-lt);
+    }
+
+    .section-head > * {
+      min-width: 0;
+    }
+
+    .panel.parent-access .eyebrow,
+    .panel.admin-access .eyebrow {
+      padding: 0;
+      border: 0;
+      background: transparent !important;
+      color: var(--p-dk) !important;
+    }
+
+    .panel.admin-access .eyebrow {
+      color: var(--amber) !important;
+    }
+
+    .panel.parent-access h2,
+    .panel.admin-access h2,
+    .panel.parent-access label,
+    .panel.admin-access label {
+      color: var(--ink) !important;
+    }
+
+    .section-head p,
+    .panel.parent-access .section-head p,
+    .panel.admin-access .section-head p,
+    .hint,
+    .panel.admin-access .hint {
+      color: var(--mt) !important;
+    }
+
+    h2,
+    h3,
+    p,
+    label,
+    .hint,
+    .notice,
+    .danger-note,
+    .success-note,
+    .brand-title,
+    .btn,
+    .tabs button,
+    th,
+    td {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    input,
+    select,
+    textarea,
+    .panel.parent-access input,
+    .panel.parent-access select,
+    .panel.admin-access input,
+    .panel.admin-access select {
+      min-height: 44px;
+      border: 1px solid var(--bd);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      box-shadow: inset 0 1px 0 rgba(14,35,54,.03);
+    }
+
+    textarea {
+      min-height: 108px;
+    }
+
+    input::placeholder,
+    textarea::placeholder,
+    .panel.parent-access input::placeholder,
+    .panel.admin-access input::placeholder {
+      color: var(--mt-lt);
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus,
+    .panel.parent-access input:focus,
+    .panel.parent-access select:focus,
+    .panel.admin-access input:focus,
+    .panel.admin-access select:focus {
+      border-color: var(--p);
+      background: #fff;
+      box-shadow: var(--ring);
+      outline: none;
+    }
+
+    .btn {
+      min-height: 42px;
+      border-radius: 8px;
+      font-weight: 800;
+      box-shadow: none;
+    }
+
+    .btn.primary,
+    .panel.parent-access .btn.primary {
+      background: var(--p) !important;
+      border-color: var(--p) !important;
+      color: #fff !important;
+      box-shadow: 0 12px 22px rgba(6,122,134,.18);
+    }
+
+    .btn.primary:hover,
+    .panel.parent-access .btn.primary:hover {
+      background: var(--p-dk) !important;
+      transform: translateY(-1px);
+    }
+
+    .btn.secondary,
+    .panel.parent-access .btn.secondary {
+      background: var(--p-lt) !important;
+      border-color: rgba(6,122,134,.20) !important;
+      color: var(--p-dk) !important;
+    }
+
+    .btn.secondary:hover,
+    .panel.parent-access .btn.secondary:hover {
+      background: #D8F0F2 !important;
+    }
+
+    .btn.warn,
+    .panel.admin-access .btn.warn {
+      background: var(--gold) !important;
+      border-color: var(--gold) !important;
+      color: #fff !important;
+      box-shadow: 0 12px 22px rgba(183,133,29,.18);
+    }
+
+    .btn.warn:hover,
+    .panel.admin-access .btn.warn:hover {
+      background: #9D6F17 !important;
+      transform: translateY(-1px);
+    }
+
+    .notice,
+    .danger-note,
+    .success-note,
+    .question,
+    .check,
+    .check-line,
+    .metric,
+    .result-card,
+    .table-wrap {
+      border-radius: 8px !important;
+    }
+
+    .panel.parent-access .notice {
+      margin-bottom: 0;
+      background: var(--p-lt) !important;
+      border-color: rgba(6,122,134,.18) !important;
+      color: var(--p-dk) !important;
+    }
+
+    .question,
+    .check,
+    .check-line {
+      border-color: var(--bd-lt);
+      background: #fff;
+    }
+
+    .question {
+      grid-template-columns: minmax(0, 1fr) 190px;
+      align-items: center;
+    }
+
+    .check:hover,
+    .question:hover {
+      border-color: rgba(6,122,134,.30);
+      box-shadow: var(--sh-xs);
+    }
+
+    .metric-grid {
+      gap: 12px;
+    }
+
+    .metric {
+      min-height: 92px;
+      border-color: var(--bd-lt);
+      background: #fff;
+      box-shadow: none;
+    }
+
+    .metric::before {
+      width: 4px;
+      border-radius: 8px 0 0 8px;
+    }
+
+    .metric span {
+      color: var(--mt);
+      font-weight: 800;
+    }
+
+    .metric strong {
+      color: var(--ink);
+    }
+
+    .table-wrap {
+      border: 1px solid var(--bd-lt);
+      background: #fff;
+      box-shadow: none;
+    }
+
+    table {
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #EEF8FA;
+      color: #0E4F59;
+    }
+
+    th,
+    td {
+      padding: 12px 14px;
+      border-bottom-color: var(--bd-lt);
+    }
+
+    tbody tr:hover td {
+      background: #F8FCFC;
+    }
+
+    .badge {
+      border-radius: 999px;
+      font-weight: 800;
+    }
+
+    .app-footer {
+      background: #0E2336 !important;
+      border-top: 4px solid var(--p);
+    }
+
+    .footer-logo,
+    .footer-dev {
+      border-radius: 8px;
+    }
+
+    #toast {
+      border-radius: 8px;
+      background: #0E2336;
+      box-shadow: 0 20px 48px rgba(14,35,54,.24);
+    }
+
+    body.login-modal-open {
+      overflow: hidden;
+    }
+
+    body.login-modal-open #login {
+      display: flex !important;
+      position: fixed;
+      inset: 0;
+      z-index: 950;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(6, 22, 36, .76) !important;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      animation: modalFadeIn .22s ease;
+    }
+
+    body.login-modal-open #login::before,
+    body.login-modal-open #login::after {
+      display: none !important;
+      content: none !important;
+    }
+
+    body.login-modal-open .modal-inner {
+      position: relative;
+      width: min(540px, 100%);
+      animation: modalSlideUp .28s cubic-bezier(.22,.68,0,1.2);
+    }
+
+    body.login-modal-open .login-grid {
+      width: 100%;
+      margin: 0;
+      padding: 0 !important;
+      border: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
+    body.login-modal-open .modal-close-btn {
+      display: flex !important;
+      background: rgba(255,255,255,.16);
+      border-color: rgba(255,255,255,.32);
+    }
+
+    @media (max-width: 1180px) {
+      body[data-view="login"] .app-main {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      body[data-view="login"] .hero-copy {
+        min-height: auto;
+        padding-block: 40px 18px;
+      }
+
+      body[data-view="login"]:not(.login-modal-open) #login {
+        position: static;
+      }
+
+      body[data-view="login"]:not(.login-modal-open) .login-grid {
+        width: min(760px, 100%);
+        margin-inline: 0;
+      }
+    }
+
+    @media (max-width: 900px) {
+      body[data-view="login"] .hero-stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      body[data-view="login"] .workflow {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .grid.two,
+      .grid.three,
+      .grid.four,
+      .admin-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 680px) {
+      body[data-view="login"]::before {
+        background:
+          linear-gradient(180deg, rgba(7,28,44,.88) 0%, rgba(7,45,55,.70) 52%, rgba(244,248,250,.98) 100%),
+          url("https://images.unsplash.com/photo-1496174742515-d2146dcf8e80?auto=format&fit=crop&fm=jpg&q=84&w=1400") !important;
+        background-size: cover;
+        background-position: 55% center;
+      }
+
+      .wrap {
+        padding-inline: 16px;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .brand {
+        align-items: flex-start;
+      }
+
+      .top-actions {
+        width: 100%;
+        justify-content: stretch;
+      }
+
+      .user-pill,
+      .top-actions .btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      body[data-view="login"] .app-main {
+        width: 100%;
+        gap: 16px;
+        padding-top: 18px;
+        overflow-x: hidden;
+      }
+
+      body[data-view="login"] .hero {
+        order: 2;
+      }
+
+      body[data-view="login"]:not(.login-modal-open) #login {
+        order: 1;
+        width: calc(100vw - 48px) !important;
+        max-width: 100% !important;
+        margin-inline: auto;
+        justify-self: stretch;
+      }
+
+      body[data-view="login"]:not(.login-modal-open) .modal-inner,
+      body[data-view="login"]:not(.login-modal-open) .login-grid,
+      body[data-view="login"]:not(.login-modal-open) .panel.parent-access,
+      body[data-view="login"]:not(.login-modal-open) .panel.admin-access {
+        width: 100% !important;
+        max-width: 100% !important;
+        opacity: 1 !important;
+        filter: none !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+      }
+
+      body[data-view="login"] .hero-copy {
+        padding: 20px 0 4px;
+      }
+
+      body[data-view="login"] h1,
+      body[data-view="login"] .hero-copy h1 {
+        max-width: 100%;
+        font-size: clamp(32px, 9vw, 48px);
+        line-height: 1.18;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+
+      body[data-view="login"] .lead {
+        font-size: 15px;
+      }
+
+      body[data-view="login"] .section-head p,
+      body[data-view="login"] .notice,
+      body[data-view="login"] .hint,
+      body[data-view="login"] .panel h2,
+      body[data-view="login"] .panel label {
+        white-space: normal !important;
+        overflow-wrap: anywhere;
+        word-break: break-all;
+      }
+
+      body[data-view="login"] .hero-stats,
+      body[data-view="login"] .workflow {
+        grid-template-columns: 1fr;
+      }
+
+      body[data-view="login"] .hero-stat {
+        min-height: 0;
+      }
+
+      body[data-view="login"] .workflow button {
+        min-height: 68px;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+      }
+
+      .hero-cta {
+        flex-direction: column;
+      }
+
+      .hero-btn-parent,
+      .hero-btn-admin {
+        width: 100%;
+      }
+
+      body[data-view="login"]:not(.login-modal-open) .login-grid {
+        padding: 8px;
+        background: #fff !important;
+      }
+
+      .panel,
+      .panel.parent-access,
+      .panel.admin-access,
+      body[data-view="login"] .panel.parent-access,
+      body[data-view="login"] .panel.admin-access {
+        padding: 20px;
+      }
+
+      .inline-fields,
+      .question {
+        grid-template-columns: 1fr;
+      }
+
+      .section-head {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .section-head .btn {
+        width: 100%;
+      }
+
+      #toast {
+        right: 12px;
+        left: 12px;
+        max-width: none;
+      }
+    }
+
+    /* Child-friendly landing with popup-only login */
+    :root {
+      --p: #EA580C;
+      --p-dk: #056B76;
+      --p-lt: #E4F8F8;
+      --gold: #D79A22;
+      --gold-lt: #FFF4D8;
+      --navy: #18344B;
+      --bg: #F5FBFD;
+      --ink: #20354A;
+      --ink2: #3B5368;
+      --mt: #6C7F91;
+      --bd: #D7E7EF;
+      --bd-lt: #E7F1F5;
+      --ring: 0 0 0 3px rgba(234,88,12,.18);
+    }
+
+    body {
+      background:
+        linear-gradient(180deg, #F9FDFF 0%, #F2FAFC 52%, #FFF8E8 100%) !important;
+      overflow-x: hidden;
+    }
+
+    .app-header {
+      background: rgba(255,255,255,.90) !important;
+      border-bottom-color: rgba(215,231,239,.82);
+    }
+
+    .app-header::before {
+      background: linear-gradient(90deg, #EA580C 0%, #FDBA74 40%, #FFD36B 72%, #F49D7A 100%) !important;
+    }
+
+    .brand-mark {
+      background: linear-gradient(135deg, #EA580C, #F97316) !important;
+      box-shadow: 0 12px 24px rgba(234,88,12,.22);
+    }
+
+    .top-actions {
+      gap: 8px;
+    }
+
+    .login-quick-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .mobile-only {
+      display: none;
+    }
+
+    .quick-login {
+      min-height: 34px;
+      padding: 7px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(234,88,12,.22);
+      background: #fff;
+      color: var(--p-dk);
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 8px 18px rgba(24,52,75,.08);
+      transition: transform .16s, box-shadow .16s, background .16s;
+    }
+
+    .quick-login:hover {
+      background: var(--p-lt);
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px rgba(24,52,75,.12);
+    }
+
+    .quick-login.admin {
+      border-color: rgba(215,154,34,.30);
+      color: #8B5F08;
+      background: #FFF9E9;
+    }
+
+    .quick-login.admin:hover {
+      background: var(--gold-lt);
+    }
+
+    body[data-view="login"] {
+      background: #F5FBFD !important;
+      isolation: isolate;
+    }
+
+    body[data-view="login"]::before {
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.96) 0%, rgba(255,255,255,.88) 48%, rgba(255,255,255,.42) 100%),
+        url("https://images.unsplash.com/photo-1496174742515-d2146dcf8e80?auto=format&fit=crop&fm=jpg&q=84&w=2200") !important;
+      background-size: cover;
+      background-position: center 42%;
+    }
+
+    body[data-view="login"] .app-main {
+      display: block !important;
+      min-height: calc(100vh - 80px);
+      padding-top: clamp(22px, 4vw, 48px);
+    }
+
+    body[data-view="login"]:not(.login-modal-open) #login {
+      display: none !important;
+    }
+
+    body[data-view="login"] .hero {
+      margin: 0;
+      position: static;
+    }
+
+    body[data-view="login"] .hero-copy {
+      min-height: calc(100vh - 168px);
+      width: min(1100px, 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: clamp(26px, 5vw, 58px);
+      border: 1px solid rgba(255,255,255,.64);
+      border-radius: 8px;
+      background:
+        linear-gradient(105deg, rgba(255,255,255,.96) 0%, rgba(255,255,255,.90) 42%, rgba(255,255,255,.70) 65%, rgba(255,255,255,.38) 100%),
+        url("https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&fm=jpg&q=85&w=1800") center right / cover no-repeat !important;
+      box-shadow: 0 28px 72px rgba(24,52,75,.13) !important;
+      text-align: left;
+    }
+
+    body[data-view="login"] .hero-copy .eyebrow {
+      margin-bottom: 14px;
+      border-color: rgba(234,88,12,.18);
+      background: #FFF7ED !important;
+      color: var(--p-dk) !important;
+    }
+
+    body[data-view="login"] h1,
+    body[data-view="login"] .hero-copy h1 {
+      max-width: 720px;
+      color: var(--ink);
+      font-size: clamp(38px, 5vw, 64px);
+      line-height: 1.2;
+      text-shadow: none;
+    }
+
+    body[data-view="login"] .h1-accent,
+    body[data-view="login"] .hero-copy h1 .h1-accent {
+      color: #F97316 !important;
+      -webkit-text-fill-color: currentColor !important;
+      background: none !important;
+    }
+
+    body[data-view="login"] .lead {
+      max-width: 700px;
+      color: var(--ink2) !important;
+      font-size: 16px;
+      line-height: 1.82;
+      text-shadow: none;
+    }
+
+    body[data-view="login"] .hero-stats {
+      width: min(760px, 100%);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    body[data-view="login"] .hero-stat {
+      min-height: 122px;
+      border-color: rgba(234,88,12,.14) !important;
+      background: rgba(255,255,255,.86) !important;
+      color: var(--ink);
+      box-shadow: 0 10px 24px rgba(24,52,75,.08);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+
+    body[data-view="login"] .hero-stat span {
+      color: var(--p-dk) !important;
+    }
+
+    body[data-view="login"] .hero-stat strong {
+      color: var(--ink);
+    }
+
+    body[data-view="login"] .hero-stat small {
+      color: var(--mt);
+    }
+
+    body[data-view="login"] .workflow-hd {
+      color: var(--ink2) !important;
+      margin-top: 28px;
+    }
+
+    body[data-view="login"] .workflow {
+      width: min(860px, 100%);
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    body[data-view="login"] .workflow button {
+      min-height: 92px;
+      border-color: rgba(234,88,12,.14) !important;
+      background: rgba(255,255,255,.82) !important;
+      color: var(--ink);
+      box-shadow: 0 10px 24px rgba(24,52,75,.07);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+
+    body[data-view="login"] .workflow button:hover {
+      background: #fff !important;
+      border-color: rgba(234,88,12,.30) !important;
+    }
+
+    body[data-view="login"] .workflow strong {
+      color: var(--ink);
+    }
+
+    body[data-view="login"] .workflow small {
+      color: var(--mt);
+    }
+
+    body[data-view="login"] .step-no,
+    body[data-view="login"] .hero-copy .workflow button .step-no {
+      background: #E5F7F8 !important;
+      color: var(--p-dk);
+      box-shadow: inset 0 0 0 1px rgba(234,88,12,.20) !important;
+    }
+
+    .hero-cta {
+      justify-content: flex-start;
+      gap: 8px;
+      margin-top: 24px;
+    }
+
+    .hero-btn-parent,
+    .hero-btn-admin {
+      min-height: 36px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      box-shadow: 0 10px 20px rgba(24,52,75,.10) !important;
+    }
+
+    .hero-btn-parent {
+      background: var(--p) !important;
+    }
+
+    .hero-btn-admin {
+      background: #FFF9E9 !important;
+      border-color: rgba(215,154,34,.32) !important;
+      color: #8B5F08 !important;
+    }
+
+    body.login-modal-open #login {
+      background:
+        linear-gradient(180deg, rgba(24,52,75,.38), rgba(24,52,75,.52)) !important;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    body.login-modal-open .modal-inner {
+      width: min(520px, calc(100vw - 32px));
+      max-height: calc(100vh - 40px);
+      overflow: auto;
+      border-radius: 8px;
+    }
+
+    body.login-modal-open .login-grid {
+      display: block;
+    }
+
+    body.login-modal-open .panel.parent-access,
+    body.login-modal-open .panel.admin-access {
+      background: #fff !important;
+      border-color: rgba(255,255,255,.80);
+      box-shadow: 0 28px 72px rgba(24,52,75,.22);
+    }
+
+    @media (max-width: 760px) {
+      .top-actions {
+        align-items: stretch;
+      }
+
+      .login-quick-actions,
+      .login-quick-actions .quick-login {
+        width: 100%;
+      }
+
+      .login-quick-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      body[data-view="login"] .app-main {
+        padding-top: 18px;
+      }
+
+      body[data-view="login"] .hero-copy {
+        min-height: auto;
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+        padding: 22px;
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.94), rgba(255,255,255,.86)),
+          url("https://images.unsplash.com/photo-1496174742515-d2146dcf8e80?auto=format&fit=crop&fm=jpg&q=84&w=1200") !important;
+        background-size: cover;
+        background-position: 54% center;
+      }
+
+      body[data-view="login"] h1,
+      body[data-view="login"] .hero-copy h1 {
+        font-size: clamp(32px, 9.5vw, 48px);
+        max-width: 100%;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+
+      .mobile-only {
+        display: block;
+      }
+
+      body[data-view="login"] .lead,
+      body[data-view="login"] .hero-stat strong,
+      body[data-view="login"] .hero-stat small,
+      body[data-view="login"] .workflow strong,
+      body[data-view="login"] .workflow small {
+        max-width: 100%;
+        overflow-wrap: anywhere;
+        word-break: break-all;
+      }
+
+      body[data-view="login"] .hero-stats,
+      body[data-view="login"] .workflow {
+        grid-template-columns: 1fr;
+      }
+
+      body[data-view="login"] .workflow button {
+        min-height: 66px;
+        flex-direction: row;
+        align-items: center;
+      }
+
+      .hero-cta {
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+
+      .hero-btn-parent,
+      .hero-btn-admin {
+        width: auto;
+      }
+    }
+
+    /* Global health institution layout */
+    :root {
+      --p: #005EB8;
+      --p-dk: #003F7D;
+      --p-lt: #EAF4FF;
+      --gold: #D1A01F;
+      --gold-lt: #FFF6D8;
+      --navy: #082B49;
+      --bg: #F5F8FB;
+      --sur: #FFFFFF;
+      --sur2: #F7FAFC;
+      --ink: #123047;
+      --ink2: #36546C;
+      --mt: #66798A;
+      --bd: #D7E3EC;
+      --bd-lt: #E7EEF4;
+      --ring: 0 0 0 3px rgba(0,94,184,.20);
+      --sh-xs: 0 1px 2px rgba(8,43,73,.05);
+      --sh-sm: 0 8px 20px rgba(8,43,73,.07);
+      --sh-md: 0 16px 36px rgba(8,43,73,.10);
+      --sh-lg: 0 24px 58px rgba(8,43,73,.13);
+      --sh-xl: 0 30px 78px rgba(8,43,73,.18);
+      --r: 8px;
+      --r-lg: 8px;
+      --r-xl: 8px;
+    }
+
+    body {
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, #FFFFFF 0%, #F6FAFD 46%, #EDF4FA 100%) !important;
+    }
+
+    .wrap {
+      width: min(1320px, 100%);
+      padding-inline: clamp(18px, 3.2vw, 40px);
+    }
+
+    .app-header {
+      position: sticky;
+      top: 0;
+      background: #064E3B !important;
+      border-bottom: 1px solid rgba(52,211,153,.18);
+      box-shadow: 0 4px 24px rgba(6,78,59,.30);
+    }
+
+    .app-header::before {
+      height: 5px;
+      background: linear-gradient(90deg, #064E3B 0%, #059669 28%, #10B981 55%, #34D399 78%, #A7F3D0 100%) !important;
+    }
+
+    .topbar {
+      min-height: 76px;
+      padding-block: 13px;
+    }
+
+    .brand {
+      gap: 16px;
+    }
+
+    .brand-mark {
+      width: 62px;
+      height: 62px;
+      border-radius: 8px;
+      background: linear-gradient(145deg, #34D399, #064E3B) !important;
+      box-shadow: 0 12px 24px rgba(5,150,105,.30);
+      font-size: 15px;
+    }
+
+    .brand-subtitle {
+      color: rgba(255,255,255,.65);
+      font-size: 17px;
+    }
+
+    .brand-title {
+      color: #fff;
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    .top-actions {
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-pill {
+      min-height: 36px;
+      border-radius: 999px;
+      border-color: var(--bd-lt);
+      background: #fff;
+      color: var(--ink2);
+      box-shadow: 0 6px 16px rgba(8,43,73,.06);
+    }
+
+    .login-quick-actions {
+      gap: 8px;
+    }
+
+    .quick-login {
+      min-height: 36px;
+      padding: 8px 15px;
+      border-radius: 999px;
+      border-color: #BCD7F0;
+      background: #F6FBFF;
+      color: var(--p-dk);
+      box-shadow: none;
+    }
+
+    .quick-login:hover {
+      background: var(--p-lt);
+      box-shadow: 0 8px 18px rgba(0,94,184,.10);
+    }
+
+    .quick-login.admin {
+      border-color: #E7D49A;
+      background: #FFFBEC;
+      color: #7A570B;
+    }
+
+    .tabs {
+      gap: 8px;
+      padding-bottom: 14px;
+    }
+
+    .tabs button {
+      min-height: 40px;
+      border-radius: 999px;
+      border-color: rgba(52,211,153,.22);
+      background: rgba(52,211,153,.10);
+      color: rgba(255,255,255,.72);
+      box-shadow: none;
+    }
+
+    .tabs button.active {
+      background: #10B981 !important;
+      border-color: #059669 !important;
+      color: #fff;
+      box-shadow: 0 12px 28px rgba(16,185,129,.35);
+    }
+
+    body[data-view="login"] {
+      background: #F5F8FB !important;
+    }
+
+    body[data-view="login"]::before {
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.99) 0%, rgba(255,255,255,.94) 42%, rgba(255,255,255,.68) 100%),
+        url("https://images.unsplash.com/photo-1496174742515-d2146dcf8e80?auto=format&fit=crop&fm=jpg&q=84&w=2200") !important;
+      background-size: cover;
+      background-position: center 43%;
+    }
+
+    body[data-view="login"] .app-main {
+      padding-block: clamp(24px, 4vw, 48px) 64px;
+    }
+
+    body[data-view="login"]:not(.login-modal-open) #login {
+      display: none !important;
+    }
+
+    body[data-view="login"] .hero-copy {
+      width: 100%;
+      min-height: auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(340px, .78fr);
+      grid-template-areas:
+        "eyebrow stats"
+        "title stats"
+        "lead stats"
+        "cta stats"
+        "flowtitle flowtitle"
+        "workflow workflow";
+      gap: 0 clamp(28px, 4vw, 56px);
+      padding: clamp(34px, 5vw, 64px);
+      border: 1px solid rgba(215,227,236,.88);
+      border-top: 6px solid var(--p);
+      border-radius: 8px;
+      background:
+        linear-gradient(105deg,
+          rgba(255,255,255,.97) 0%,
+          rgba(255,255,255,.92) 40%,
+          rgba(255,255,255,.72) 62%,
+          rgba(255,255,255,.38) 100%),
+        url("https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&fm=jpg&q=85&w=1800") center right / cover no-repeat !important;
+      box-shadow: 0 26px 70px rgba(8,43,73,.13) !important;
+      overflow: hidden;
+      position: relative;
+    }
+
+    body[data-view="login"] .hero-copy::before {
+      content: "";
+      display: block !important;
+      position: absolute;
+      inset: auto -80px -120px auto;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(234,88,12,.12) 0%, rgba(234,88,12,.04) 48%, transparent 70%);
+      pointer-events: none;
+    }
+
+    body[data-view="login"] .hero-copy::after {
+      content: "";
+      display: block !important;
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(234,88,12,.30), transparent 70%);
+    }
+
+    body[data-view="login"] .hero-copy > *:not(.hero-deco) {
+      position: relative;
+      z-index: 1;
+    }
+
+    body[data-view="login"] .hero-copy .eyebrow {
+      grid-area: eyebrow;
+      margin: 0 0 18px;
+      padding: 7px 12px;
+      border-radius: 4px;
+      border: 1px solid #CFE2F3;
+      background: #F1F8FF !important;
+      color: var(--p-dk) !important;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      width: fit-content;
+    }
+
+    body[data-view="login"] .hero-copy h1 {
+      grid-area: title;
+      max-width: 760px;
+      color: var(--navy);
+      font-size: clamp(38px, 5vw, 64px);
+      line-height: 1.07;
+      font-weight: 900;
+      margin: 0;
+    }
+
+    body[data-view="login"] .hero-copy h1 .h1-accent {
+      color: var(--p) !important;
+      -webkit-text-fill-color: currentColor !important;
+      background: none !important;
+    }
+
+    body[data-view="login"] .lead {
+      grid-area: lead;
+      max-width: 720px;
+      margin-top: 20px;
+      color: #40596F !important;
+      font-size: 16px;
+      line-height: 1.9;
+    }
+
+    body[data-view="login"] .hero-cta {
+      grid-area: cta;
+      margin-top: 26px;
+      align-items: center;
+    }
+
+    .hero-btn-parent,
+    .hero-btn-admin {
+      min-height: 38px;
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .hero-btn-parent {
+      background: var(--p) !important;
+      border: 1px solid var(--p) !important;
+      color: #fff;
+      box-shadow: 0 10px 22px rgba(0,94,184,.18) !important;
+    }
+
+    .hero-btn-admin {
+      background: #fff !important;
+      border: 1px solid #CAD8E4 !important;
+      color: var(--ink2) !important;
+      box-shadow: none !important;
+    }
+
+    /* ── Photo Mosaic Gallery ── */
+    body[data-view="login"] .hero-stats {
+      grid-area: stats;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 210px 155px;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      border: none;
+      background: none !important;
+      box-shadow: none;
+      align-self: center;
+    }
+
+    .stat-card {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 8px 28px rgba(0,0,0,.15);
+      transition: transform .22s ease, box-shadow .22s ease;
+    }
+    .stat-card:hover {
+      transform: scale(1.025);
+      box-shadow: 0 18px 44px rgba(0,0,0,.22);
+    }
+    .stat-card--lg { grid-column: 1 / -1; }
+    .stat-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .45s ease;
+    }
+    .stat-card:hover img { transform: scale(1.08); }
+
+    .stat-card-body {
+      position: absolute;
+      inset: auto 0 0 0;
+      padding: 14px 16px 16px;
+      background: linear-gradient(to top,
+        rgba(6,15,28,.88) 0%,
+        rgba(6,15,28,.50) 50%,
+        transparent 100%);
+    }
+    .stat-card-badge {
+      display: inline-block;
+      font-size: 9.5px;
+      font-weight: 800;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: #fff;
+      background: rgba(255,255,255,.18);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,.28);
+      border-radius: 99px;
+      padding: 3px 10px;
+      margin-bottom: 6px;
+    }
+    .stat-card-body strong {
+      display: block;
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.3;
+    }
+    .stat-card-body small {
+      display: block;
+      font-size: 11px;
+      color: rgba(255,255,255,.72);
+      margin-top: 2px;
+      line-height: 1.4;
+    }
+
+    body[data-view="login"] .workflow-hd {
+      grid-area: flowtitle;
+      margin: clamp(28px, 4vw, 44px) 0 12px;
+      color: var(--navy) !important;
+      font-size: 14px;
+      font-weight: 900;
+      border-top: 1px solid var(--bd-lt);
+      padding-top: 22px;
+    }
+
+    body[data-view="login"] .workflow {
+      grid-area: workflow;
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin: 0;
+    }
+
+    body[data-view="login"] .workflow button {
+      min-height: 98px;
+      padding: 15px;
+      border-radius: 6px;
+      border: 1px solid var(--bd-lt) !important;
+      background: #fff !important;
+      color: var(--ink);
+      box-shadow: 0 8px 18px rgba(8,43,73,.05);
+    }
+
+    body[data-view="login"] .workflow button:hover {
+      border-color: #B7D5EF !important;
+      background: #F8FCFF !important;
+    }
+
+    body[data-view="login"] .workflow strong {
+      color: var(--navy);
+    }
+
+    body[data-view="login"] .workflow small {
+      color: #677A8B;
+    }
+
+    body[data-view="login"] .step-no,
+    body[data-view="login"] .hero-copy .workflow button .step-no {
+      width: 34px;
+      height: 34px;
+      border-radius: 4px;
+      background: #EAF4FF !important;
+      color: var(--p-dk);
+      box-shadow: inset 0 0 0 1px #C8DEF2 !important;
+    }
+
+    body.login-modal-open #login {
+      background: rgba(4,28,50,.64) !important;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    body.login-modal-open .modal-inner {
+      width: min(540px, calc(100vw - 32px));
+      max-height: calc(100vh - 40px);
+      overflow: auto;
+      border-radius: 8px;
+    }
+
+    body.login-modal-open .panel.parent-access,
+    body.login-modal-open .panel.admin-access {
+      border-top: 0;
+      border-color: #D8E5EF;
+      background: #fff !important;
+      box-shadow: 0 30px 84px rgba(4,28,50,.28);
+    }
+
+    body.login-modal-open .panel.parent-access::before {
+      background: var(--p) !important;
+    }
+
+    body.login-modal-open .panel.admin-access::before {
+      background: var(--gold) !important;
+    }
+
+    @media (max-width: 1100px) {
+      body[data-view="login"] .hero-copy {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas:
+          "eyebrow"
+          "title"
+          "lead"
+          "cta"
+          "stats"
+          "flowtitle"
+          "workflow";
+      }
+
+      body[data-view="login"] .hero-stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        margin-top: 30px;
+      }
+
+      body[data-view="login"] .workflow {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .topbar {
+        min-height: 0;
+      }
+
+      .top-actions {
+        align-items: stretch;
+      }
+
+      .login-quick-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+
+      .login-quick-actions .quick-login {
+        width: 100%;
+      }
+
+      body[data-view="login"] .app-main {
+        padding-top: 18px;
+      }
+
+      body[data-view="login"] .hero-copy {
+        padding: 24px;
+        border-top-width: 5px;
+        background: #fff !important;
+      }
+
+      body[data-view="login"] .hero-copy::before {
+        width: 250px;
+        height: 250px;
+        inset: auto -90px -110px auto;
+      }
+
+      body[data-view="login"] .hero-copy h1 {
+        font-size: clamp(32px, 9vw, 48px);
+        line-height: 1.14;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+
+      body[data-view="login"] .lead {
+        font-size: 15px;
+        line-height: 1.78;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+
+      .mobile-only {
+        display: block;
+      }
+
+      body[data-view="login"] .hero-stats,
+      body[data-view="login"] .workflow {
+        grid-template-columns: 1fr;
+      }
+
+      body[data-view="login"] .workflow button {
+        min-height: 68px;
+        flex-direction: row;
+        align-items: center;
+      }
+
+      .hero-cta {
+        flex-wrap: wrap;
+      }
+    }
+
+    /* ══════════════════════════════════════
+       TIMELINE
+    ══════════════════════════════════════ */
+    .timeline {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      margin-top: 0;
+    }
+
+    /* ── Each step card ── */
+    .tl-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 20px 10px 18px;
+      border-radius: 18px;
+      cursor: pointer;
+      transition: transform .22s cubic-bezier(.22,.68,0,1.2),
+                  box-shadow .22s ease;
+      border: none;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0,0,0,.13);
+    }
+
+    /* Glossy shimmer overlay */
+    .tl-item::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg,
+        rgba(255,255,255,.22) 0%,
+        rgba(255,255,255,.04) 50%,
+        rgba(0,0,0,.06) 100%);
+      pointer-events: none;
+    }
+
+    /* Unique gradient per step (nth-child counts .tl-arrow too) */
+    .tl-item:nth-child(1) {
+      background: linear-gradient(145deg, #0FCBD8 0%, #0D8D9B 100%);
+    }
+    .tl-item:nth-child(3) {
+      background: linear-gradient(145deg, #FFCA3A 0%, #FF8C00 100%);
+    }
+    .tl-item:nth-child(5) {
+      background: linear-gradient(145deg, #3DDC97 0%, #1A9E65 100%);
+    }
+    .tl-item:nth-child(7) {
+      background: linear-gradient(145deg, #A78BFA 0%, #6D28D9 100%);
+    }
+    .tl-item:nth-child(9) {
+      background: linear-gradient(145deg, #FB7185 0%, #C2184A 100%);
+    }
+
+    .tl-item:nth-child(1):hover { box-shadow: 0 18px 42px rgba(13,141,155,.42); }
+    .tl-item:nth-child(3):hover { box-shadow: 0 18px 42px rgba(255,140,0,.40); }
+    .tl-item:nth-child(5):hover { box-shadow: 0 18px 42px rgba(26,158,101,.40); }
+    .tl-item:nth-child(7):hover { box-shadow: 0 18px 42px rgba(109,40,217,.40); }
+    .tl-item:nth-child(9):hover { box-shadow: 0 18px 42px rgba(194,24,74,.40); }
+
+    .tl-item:hover {
+      transform: translateY(-7px) scale(1.04);
+      z-index: 2;
+    }
+
+    /* ── Arrow connector ── */
+    .tl-arrow {
+      flex: 0 0 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      align-self: center;
+      user-select: none;
+      position: relative;
+    }
+
+    .tl-arrow::before {
+      content: "";
+      position: absolute;
+      top: 50%; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg,
+        rgba(100,140,160,.18),
+        rgba(100,140,160,.38),
+        rgba(100,140,160,.18));
+      transform: translateY(-50%);
+    }
+
+    .tl-arrow::after {
+      content: "›";
+      font-size: 22px;
+      font-weight: 300;
+      color: rgba(80,120,140,.45);
+      position: relative;
+      z-index: 1;
+      line-height: 1;
+    }
+
+    /* ── Icon ── */
+    .tl-icon {
+      font-size: 34px;
+      line-height: 1;
+      filter: drop-shadow(0 3px 8px rgba(0,0,0,.25));
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Step number badge ── */
+    .tl-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.28);
+      border: 2px solid rgba(255,255,255,.65);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 900;
+      display: grid;
+      place-items: center;
+      position: relative;
+      z-index: 1;
+      text-shadow: 0 1px 3px rgba(0,0,0,.25);
+    }
+
+    /* ── Text ── */
+    .tl-body {
+      position: relative;
+      z-index: 1;
+    }
+
+    .tl-body strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.3;
+      text-shadow: 0 1px 4px rgba(0,0,0,.22);
+    }
+
+    .tl-body small {
+      display: block;
+      font-size: 10.5px;
+      color: rgba(255,255,255,.85);
+      margin-top: 4px;
+      line-height: 1.45;
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 760px) {
+      .timeline { flex-direction: column; gap: 8px; }
+      .tl-arrow { height: 20px; width: auto; flex: 0 0 20px; }
+      .tl-arrow::before { width: 2px; height: 100%; top: 0; left: 50%;
+                          transform: translateX(-50%);
+                          background: linear-gradient(180deg,rgba(100,140,160,.18),rgba(100,140,160,.38),rgba(100,140,160,.18)); }
+      .tl-arrow::after { content: "↓"; font-size: 18px; }
+      .tl-item { flex-direction: row; text-align: left; padding: 16px 18px; gap: 14px; }
+      .tl-body strong { font-size: 14px; }
+      .tl-body small  { font-size: 11.5px; }
+    }
+
+    /* ══════════════════════════════════════
+       THAI DATE PICKER
+    ══════════════════════════════════════ */
+    .thai-dp {
+      display: grid;
+      grid-template-columns: 84px 1fr 104px;
+      gap: 8px;
+    }
+
+    .thai-dp-sel {
+      width: 100%;
+      min-height: 44px;
+      padding: 9px 30px 9px 12px;
+      border: 1px solid var(--bd);
+      border-radius: var(--r);
+      background: #fff;
+      color: var(--ink);
+      font-size: 14.5px;
+      outline: none;
+      cursor: pointer;
+      transition: border-color .16s, box-shadow .16s;
+      /* custom caret so every box looks consistent */
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2336546C' d='M6 8 0 0h12z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 11px center;
+      box-shadow: inset 0 1px 0 rgba(14,35,54,.03);
+    }
+
+    /* Date picker lives inside the white login modal → dark text on white */
+    .panel.parent-access .thai-dp-sel,
+    .thai-dp-sel {
+      background-color: #fff;
+      border-color: var(--bd);
+      color: var(--ink);
+    }
+    .panel.parent-access .thai-dp-sel option,
+    .thai-dp-sel option { background: #fff; color: var(--ink); }
+
+    .panel.parent-access .thai-dp-sel:hover,
+    .thai-dp-sel:hover { border-color: var(--p); }
+
+    .panel.parent-access .thai-dp-sel:focus,
+    .thai-dp-sel:focus {
+      background-color: #fff;
+      border-color: var(--p);
+      box-shadow: var(--ring);
+    }
+
+    @media (max-width: 640px) {
+      .thai-dp { grid-template-columns: 72px 1fr 92px; gap: 6px; }
+    }
+
+    /* ══════════════════════════════════════
+       DUAL-PATH TIMELINE
+    ══════════════════════════════════════ */
+    .dual-path { display: flex; flex-direction: column; gap: 14px; margin-top: 0; }
+
+    .path-label {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 5px 13px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 9px;
+    }
+    .parent-path .path-label {
+      background: rgba(255,255,255,.22);
+      color: rgba(255,255,255,.95);
+      border: 1px solid rgba(255,255,255,.38);
+    }
+    .staff-path .path-label {
+      background: rgba(255,255,255,.12);
+      color: rgba(255,255,255,.80);
+      border: 1px solid rgba(255,255,255,.22);
+    }
+    .path-steps { display: flex; align-items: stretch; gap: 0; }
+
+    /* Staff path — distinct color palette */
+    .staff-path .tl-item:nth-child(1) { background: linear-gradient(145deg,#A78BFA 0%,#6D28D9 100%); }
+    .staff-path .tl-item:nth-child(3) { background: linear-gradient(145deg,#FB923C 0%,#C2550A 100%); }
+    .staff-path .tl-item:nth-child(5) { background: linear-gradient(145deg,#34D399 0%,#059669 100%); }
+    .staff-path .tl-item:nth-child(1):hover { box-shadow: 0 18px 42px rgba(109,40,217,.42); }
+    .staff-path .tl-item:nth-child(3):hover { box-shadow: 0 18px 42px rgba(194,85,10,.42); }
+    .staff-path .tl-item:nth-child(5):hover { box-shadow: 0 18px 42px rgba(5,150,105,.42); }
+
+    @media (max-width: 760px) {
+      .path-steps { flex-direction: column; gap: 8px; }
+    }
+
+    /* ══ Role-based field visibility ══ */
+    body[data-role="parent"] .clinical-field { display: none !important; }
+    body[data-role="parent"] .staff-only     { display: none !important; }
+
+    /* ══ Nurse registration banner ══ */
+    .nurse-reg-banner {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: linear-gradient(135deg,rgba(109,40,217,.09),rgba(109,40,217,.05));
+      border: 1.5px solid rgba(109,40,217,.22);
+      border-radius: var(--r);
+      padding: 15px 18px;
+      margin-bottom: 20px;
+    }
+    .nurse-reg-icon { font-size: 28px; flex-shrink: 0; line-height: 1; margin-top: 2px; }
+    .nurse-reg-body h4 { color: var(--purple); font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .nurse-reg-body p  { font-size: 13px; color: var(--ink2); margin: 0; line-height: 1.55; }
+
+    /* ══════════════════════════════════════════════════════════
+       ✦ SCREENING POLISH  —  ยกระดับหน้าแบบคัดกรองให้ประณีตขึ้น
+       (ชั้นสุดท้าย: override เดิมทั้งหมดด้วยลำดับ cascade)
+    ══════════════════════════════════════════════════════════ */
+
+    /* ── หัวข้อ panel ย่อย (สัญญาณสำคัญ / ปัจจัยเสี่ยง / OSA-18) ── */
+    .panel.soft {
+      border-radius: 14px;
+      border: 1px solid var(--bd-lt);
+      background:
+        linear-gradient(180deg, #FFFFFF 0%, var(--sur2) 100%);
+      box-shadow: 0 6px 20px rgba(16,38,58,.05);
+    }
+    .panel.soft::before { opacity: 1; height: 3px; }
+
+    .panel.soft > h3 {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 15.5px;
+      padding-bottom: 12px;
+      margin-bottom: 2px;
+      border-bottom: 1px solid var(--bd-lt);
+    }
+    .panel.soft > h3::before {
+      content: "";
+      flex: 0 0 auto;
+      width: 8px;
+      height: 20px;
+      border-radius: 99px;
+      background: linear-gradient(180deg, var(--p), #4FC3CF);
+    }
+    /* หัวข้อ OSA-18 ให้สีทอง + ปัจจัยเสี่ยงให้สีเหลืองอำพัน เพื่อแยกโซน */
+    #screening .grid.two .panel.soft:nth-child(2) > h3::before {
+      background: linear-gradient(180deg, var(--amber), #E8B860);
+    }
+    .panel.soft.mt > h3::before {
+      background: linear-gradient(180deg, var(--gold), #E8C46E);
+    }
+
+    /* ── การ์ดคำถาม ── */
+    .q-card {
+      padding: 16px 18px 17px;
+      border-radius: 13px;
+      border: 1.5px solid var(--bd-lt);
+      background: var(--sur);
+      box-shadow: 0 2px 6px rgba(16,38,58,.04);
+      transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+    }
+    .q-card:hover {
+      border-color: rgba(8,127,143,.32);
+      box-shadow: 0 10px 26px rgba(16,38,58,.09);
+      transform: translateY(-1px);
+    }
+    .q-card:focus-within {
+      border-color: rgba(8,127,143,.55);
+      box-shadow: var(--ring);
+    }
+
+    .q-label {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+
+    /* หมายเลขคำถามแบบ badge ไล่เฉด */
+    .q-num {
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(135deg, var(--p), var(--p-dk));
+      box-shadow: 0 3px 8px rgba(8,127,143,.35);
+      font-size: 11.5px;
+      align-self: flex-start;
+      margin-top: 1px;
+    }
+
+    .q-domain {
+      background: var(--p-lt);
+      color: var(--p-dk);
+      border: 1px solid rgba(8,127,143,.20);
+      font-weight: 700;
+      letter-spacing: .01em;
+    }
+
+    /* ── ปุ่ม มี / ไม่มี ── */
+    .q-btn-row { gap: 10px; }
+    .q-opt {
+      padding: 11px 14px;
+      border-radius: 11px;
+      border: 2px solid var(--bd-lt);
+      font-size: 14px;
+      font-weight: 700;
+      transition: all .16s ease;
+    }
+    .q-opt:hover {
+      border-color: var(--p);
+      color: var(--p-dk);
+      background: var(--p-lt);
+      transform: translateY(-1px);
+    }
+    .q-opt[data-val="false"]:hover {
+      border-color: #10B981;
+      color: #065F46;
+      background: #ECFDF5;
+    }
+    .q-opt[data-val="false"].selected {
+      background: linear-gradient(135deg, #ECFDF5, #D1FAE5);
+      border-color: #10B981;
+      color: #065F46;
+      box-shadow: 0 6px 16px rgba(16,185,129,.22);
+    }
+    .q-opt[data-val="true"].selected {
+      background: linear-gradient(135deg, #FFF1F2, #FEE2E4);
+      border-color: var(--red);
+      color: var(--red);
+      box-shadow: 0 6px 16px rgba(180,35,47,.20);
+    }
+
+    /* ── ปุ่มคะแนน OSA-18 (1–7) : สเกลไล่สี เขียว → เหลือง → แดง ── */
+    .score-btn-row { gap: 6px; }
+    .score-btn {
+      padding: 9px 2px 8px;
+      border-radius: 11px;
+      border: 2px solid var(--bd-lt);
+      background: var(--sur2);
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--ink2);
+      transition: all .15s ease;
+    }
+    .score-btn span { font-size: 8.5px; margin-top: 2px; }
+    .score-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(16,38,58,.12);
+    }
+
+    /* สีประจำระดับความรุนแรง (hover ใบ้สี, selected เติมเต็ม) */
+    .score-btn[data-val="1"]:hover, .score-btn[data-val="2"]:hover { border-color:#10B981; color:#059669; background:#ECFDF5; }
+    .score-btn[data-val="3"]:hover, .score-btn[data-val="4"]:hover { border-color:#F59E0B; color:#B45309; background:#FFFBEB; }
+    .score-btn[data-val="5"]:hover { border-color:#F97316; color:#C2410C; background:#FFF7ED; }
+    .score-btn[data-val="6"]:hover, .score-btn[data-val="7"]:hover { border-color:#EF4444; color:#B91C1C; background:#FEF2F2; }
+
+    .score-btn.selected { color:#fff; border-color: transparent; }
+    .score-btn.selected span { color: rgba(255,255,255,.85); }
+    .score-btn[data-val="1"].selected { background: linear-gradient(135deg,#34D399,#059669); box-shadow:0 6px 16px rgba(5,150,105,.38); }
+    .score-btn[data-val="2"].selected { background: linear-gradient(135deg,#6EE7B7,#10B981); box-shadow:0 6px 16px rgba(16,185,129,.38); }
+    .score-btn[data-val="3"].selected { background: linear-gradient(135deg,#FCD34D,#F59E0B); box-shadow:0 6px 16px rgba(245,158,11,.38); }
+    .score-btn[data-val="4"].selected { background: linear-gradient(135deg,#FBBF24,#D97706); box-shadow:0 6px 16px rgba(217,119,6,.38); }
+    .score-btn[data-val="5"].selected { background: linear-gradient(135deg,#FB923C,#EA580C); box-shadow:0 6px 16px rgba(234,88,12,.40); }
+    .score-btn[data-val="6"].selected { background: linear-gradient(135deg,#F87171,#DC2626); box-shadow:0 6px 16px rgba(220,38,38,.40); }
+    .score-btn[data-val="7"].selected { background: linear-gradient(135deg,#EF4444,#B91C1C); box-shadow:0 6px 18px rgba(185,28,28,.44); }
+
+    /* ── การ์ดปัจจัยเสี่ยง (checkbox) ── */
+    .check-grid { gap: 11px; }
+    .check {
+      border-radius: 12px;
+      border: 1.5px solid var(--bd-lt);
+      background: var(--sur);
+      padding: 13px 14px;
+      font-size: 13.5px;
+      transition: all .16s ease;
+    }
+    .check:hover {
+      border-color: rgba(168,100,5,.40);
+      background: var(--amb-lt);
+      box-shadow: 0 6px 16px rgba(168,100,5,.10);
+      transform: translateY(-1px);
+    }
+    .check:has(input:checked) {
+      border-color: var(--amber);
+      background: linear-gradient(135deg, #FFFBF3, var(--amb-lt));
+      box-shadow: 0 4px 14px rgba(168,100,5,.14);
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .check input { accent-color: var(--amber); width:17px; height:17px; }
+
+    /* ── ปุ่มหลักในหน้าคัดกรอง (เด่นขึ้นเล็กน้อย) ── */
+    #screening .btn.primary {
+      box-shadow: 0 6px 20px rgba(8,127,143,.32);
+      padding-inline: 26px;
+    }
+
+    /* ── ผลการประเมิน (result card) ให้ดูมีน้ำหนักขึ้น ── */
+    .result-card {
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(16,38,58,.10);
+    }
+
+    /* ── เลือกเด็ก / select ในหน้าคัดกรอง ── */
+    #screening select#screenChild {
+      font-weight: 600;
+    }
+
+    /* ── หัวข้อหลัก section ให้มีเส้นทองบางใต้ eyebrow ── */
+    #screening .section-head .eyebrow {
+      background: var(--p-lt);
+      color: var(--p-dk);
+      border: 1px solid rgba(8,127,143,.22);
+    }
+
+    @media (max-width: 640px) {
+      .score-btn { font-size: 15px; }
+      .score-btn span { font-size: 8px; }
+      .q-btn-row { flex-direction: column; }
+    }
+  </style>
+</head>
+
+<body data-view="login">
+
+  <!-- ════ HEADER ════ -->
+  <header class="app-header">
+    <div class="wrap topbar">
+      <div class="brand">
+        <div class="brand-mark">OSA</div>
+        <div>
+          <p class="brand-subtitle">Thanyaburi Hospital · Pediatric Screening</p>
+          <div class="brand-title">ระบบคัดกรองเด็กนอนกรนออนไลน์</div>
+        </div>
+      </div>
+      <div class="top-actions">
+        <div id="loginQuickActions" class="login-quick-actions">
+          <button type="button" class="quick-login parent" onclick="openLoginModal('parent')">เข้าสู่ระบบผู้ปกครอง</button>
+          <button type="button" class="quick-login admin" onclick="openLoginModal('admin')">ผู้ดูแล</button>
+        </div>
+      </div>
+    </div>
+    <nav id="tabs" class="wrap tabs" aria-label="เมนูระบบ">
+      <button type="button" data-tab="login"     onclick="showTab('login')">เข้าสู่ระบบ</button>
+      <button type="button" data-tab="child"     onclick="showTab('child')">ข้อมูลเด็ก</button>
+      <button type="button" data-tab="screening" onclick="showTab('screening')">คัดกรองออนไลน์</button>
+      <button type="button" data-tab="video"     onclick="showTab('video')">อัปโหลดวิดีโอ</button>
+      <button type="button" data-tab="dashboard" onclick="showTab('dashboard')">Dashboard</button>
+      <div class="tabs-right">
+        <div id="userPill" class="user-pill">ยังไม่ได้เข้าสู่ระบบ</div>
+        <button id="logoutButton" class="btn secondary small hidden" onclick="logout()">ออกจากระบบ</button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ════ MAIN ════ -->
+  <main class="wrap app-main">
+
+    <!-- Hero (login view only) -->
+    <div class="hero">
+      <article class="hero-copy">
+        <div class="eyebrow">🏥 Clinical WebApp · ระบบคัดกรองเด็ก</div>
+        <h1>คัดกรองเด็กนอนกรน<br><span class="h1-accent">ออนไลน์ ครบในที่เดียว</span></h1>
+        <p class="lead">
+          เด็กที่นอนกรนเสี่ยงต่อภาวะหยุดหายใจขณะหลับ ส่งผลต่อสมาธิ การเจริญเติบโต
+          และพัฒนาการ สังเกตอาการ กรนเสียงดัง หายใจติดขัด นอนกระสับกระส่าย
+          หรือง่วงนอนกลางวัน ให้รีบปรึกษาแพทย์เพื่อรับการรักษาที่ถูกต้องตั้งแต่เนิ่น ๆ
+        </p>
+
+        <!-- ── Photo Mosaic Gallery ── -->
+        <div class="hero-stats" aria-label="จุดเด่นระบบ">
+
+          <div class="stat-card stat-card--lg" onclick="openLoginModal('parent')" role="button" tabindex="0">
+            <img src="https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?auto=format&fit=crop&w=900&q=85"
+                 alt="หมอผู้หญิงกับเด็ก" loading="lazy">
+            <div class="stat-card-body">
+              <span class="stat-card-badge">🩺 หมอเด็กเฉพาะทาง</span>
+              <strong>คัดกรองด้วยแบบประเมิน OSA-18</strong>
+              <small>มาตรฐานสากล ประเมินครบ 18 ข้อ</small>
+            </div>
+          </div>
+
+          <div class="stat-card stat-card--sm" onclick="goWorkflow('video')" role="button" tabindex="0">
+            <img src="https://images.unsplash.com/photo-1555252333-9f8e92e65df9?auto=format&fit=crop&w=500&q=85"
+                 alt="เด็กนอนหลับ" loading="lazy">
+            <div class="stat-card-body">
+              <span class="stat-card-badge">😴 วิดีโอการนอน</span>
+              <strong>AI วิเคราะห์เสียงกรน</strong>
+            </div>
+          </div>
+
+          <div class="stat-card stat-card--sm" onclick="goWorkflow('dashboard')" role="button" tabindex="0">
+            <img src="https://images.unsplash.com/photo-1536640712-4d4c36ff0e4e?auto=format&fit=crop&w=500&q=85"
+                 alt="ครอบครัวติดตามผล" loading="lazy">
+            <div class="stat-card-body">
+              <span class="stat-card-badge">📊 ติดตามผล</span>
+              <strong>Dashboard ครอบครัว</strong>
+            </div>
+          </div>
+
+        </div>
+        <p class="workflow-hd">เลือกบทบาทของคุณ — คลิกที่ขั้นตอนใดก็ได้</p>
+        <div class="dual-path" aria-label="ขั้นตอนแยกตามบทบาท">
+
+          <!-- ── ผู้ปกครอง ── -->
+          <div class="path parent-path">
+            <div class="path-label">👨‍👩‍👧 ผู้ปกครอง — ทำเองที่บ้าน</div>
+            <div class="path-steps">
+              <button type="button" class="tl-item" onclick="openLoginModal('parent')">
+                <div class="tl-icon">🔐</div><div class="tl-num">1</div>
+                <div class="tl-body"><strong>เข้าสู่ระบบ</strong><small>บัตร ปชช.&nbsp;+&nbsp;วันเกิดเด็ก</small></div>
+              </button>
+              <div class="tl-arrow" aria-hidden="true">›</div>
+              <button type="button" class="tl-item" onclick="goWorkflow('screening')">
+                <div class="tl-icon">📋</div><div class="tl-num">2</div>
+                <div class="tl-body"><strong>ตอบ OSA-18</strong><small>แบบคัดกรองการนอนหลับ</small></div>
+              </button>
+              <div class="tl-arrow" aria-hidden="true">›</div>
+              <button type="button" class="tl-item" onclick="goWorkflow('video')">
+                <div class="tl-icon">🎥</div><div class="tl-num">3</div>
+                <div class="tl-body"><strong>อัปโหลดวิดีโอ</strong><small>AI วิเคราะห์การนอน</small></div>
+              </button>
+            </div>
+          </div>
+
+          <!-- ── เจ้าหน้าที่ ── -->
+          <div class="path staff-path">
+            <div class="path-label">👩‍⚕️ พยาบาล / หมอ — ที่คลินิก</div>
+            <div class="path-steps">
+              <button type="button" class="tl-item" onclick="openLoginModal('admin')">
+                <div class="tl-icon">🔑</div><div class="tl-num">1</div>
+                <div class="tl-body"><strong>Login เจ้าหน้าที่</strong><small>username&nbsp;+&nbsp;password</small></div>
+              </button>
+              <div class="tl-arrow" aria-hidden="true">›</div>
+              <button type="button" class="tl-item" onclick="goWorkflow('child')">
+                <div class="tl-icon">👶</div><div class="tl-num">2</div>
+                <div class="tl-body"><strong>ลงทะเบียนเด็ก</strong><small>CID + ข้อมูลคลินิก</small></div>
+              </button>
+              <div class="tl-arrow" aria-hidden="true">›</div>
+              <button type="button" class="tl-item" onclick="goWorkflow('dashboard')">
+                <div class="tl-icon">📊</div><div class="tl-num">3</div>
+                <div class="tl-body"><strong>ดู Dashboard</strong><small>ทบทวนเคส ติดตามผล</small></div>
+              </button>
+            </div>
+          </div>
+
+        </div>
+        <div class="hero-cta">
+          <button class="hero-btn-parent" onclick="openLoginModal('parent')">👨‍👩‍👧 ผู้ปกครอง</button>
+          <button class="hero-btn-admin" onclick="openLoginModal('admin')">👩‍⚕️ พยาบาล / หมอ</button>
+        </div>
+      </article>
+    </div>
+
+    <!-- ════ LOGIN MODAL ════ -->
+    <section id="login" class="section">
+      <div class="modal-inner">
+        <button class="modal-close-btn" onclick="closeLoginModal()" aria-label="ปิด">✕</button>
+        <div class="grid login-grid">
+
+        <!-- Parent CID Login -->
+        <article class="panel parent-access">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Parent Access</div>
+              <h2>เข้าสู่ระบบผู้ปกครอง</h2>
+              <p>ใช้เลขบัตรประชาชนของเด็กและวันเกิดเพื่อเข้าสู่ระบบ ไม่ต้องใช้อีเมลหรือรหัส OTP</p>
+            </div>
+          </div>
+          <div class="grid">
+            <div class="field">
+              <label for="childCid">เลขบัตรประชาชนเด็ก (13 หลัก)</label>
+              <input id="childCid" inputmode="numeric" maxlength="13" autocomplete="off"
+                     placeholder="x-xxxx-xxxxx-xx-x">
+            </div>
+            <div class="field">
+              <label>วันเกิดเด็ก (วัน / เดือน / พ.ศ.)</label>
+              <div id="childBirthDatePicker" class="thai-dp-wrap"></div>
+              <input type="hidden" id="childBirthDate">
+            </div>
+            <button class="btn primary" onclick="loginWithCid()">เข้าสู่ระบบ</button>
+          </div>
+          <div class="notice">
+            ระบบนี้เป็นเครื่องมือคัดกรองและติดตาม ไม่ใช่การวินิจฉัยแทนแพทย์
+            หากมีอาการหยุดหายใจ หายใจลำบาก หรือปลุกยากผิดปกติควรพบแพทย์
+          </div>
+        </article>
+
+        <!-- Admin login -->
+        <article class="panel admin-access">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Admin Console</div>
+              <h2>เข้าสู่ระบบผู้ดูแล</h2>
+              <p>สำหรับจัดการผู้ใช้ เคสคัดกรอง สถานะวิดีโอ และภาพรวมข้อมูลทั้งหมด</p>
+            </div>
+          </div>
+          <div class="grid">
+            <div class="field">
+              <label for="adminUsername">Username</label>
+              <input id="adminUsername" autocomplete="username" placeholder="admin">
+            </div>
+            <div class="field">
+              <label for="adminPassword">Password</label>
+              <input id="adminPassword" type="password" autocomplete="current-password" placeholder="••••">
+            </div>
+            <button class="btn warn" onclick="adminLogin()">เข้าสู่ระบบ Admin</button>
+          </div>
+          <p class="hint" style="margin-top:14px">บัญชีต้นแบบ: admin / 1234 · ควรย้ายรหัสผ่านไปไว้ใน Script Properties ก่อนใช้งานจริง</p>
+        </article>
+
+        </div><!-- /login-grid -->
+      </div><!-- /modal-inner -->
+    </section>
+
+    <!-- ════ CHILD PROFILE ════ -->
+    <section id="child" class="section">
+      <article class="panel">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Child Profile</div>
+            <h2>บันทึกข้อมูลเด็ก</h2>
+            <p>พยาบาลกรอกข้อมูล CID และข้อมูลคลินิกครั้งแรก — ผู้ปกครองดูข้อมูลพื้นฐานและตอบแบบคัดกรองเองได้</p>
+          </div>
+          <button class="btn secondary" onclick="loadDashboard()">รีเฟรชข้อมูล</button>
+        </div>
+
+        <!-- Banner พยาบาล (ซ่อนเมื่อ role=parent) -->
+        <div class="staff-only nurse-reg-banner">
+          <div class="nurse-reg-icon">👩‍⚕️</div>
+          <div class="nurse-reg-body">
+            <h4>โหมดพยาบาล — ลงทะเบียนเด็กในระบบ</h4>
+            <p>กรอกข้อมูลเด็กให้ครบรวมถึง CID และข้อมูลคลินิก (ทอนซิล / X-ray) ก่อนบอกผู้ปกครองให้เข้าสู่ระบบ ผู้ปกครองจะใช้ <strong>เลขบัตรประชาชน + วันเกิดเด็ก</strong> เพื่อเข้าถึงข้อมูลและตอบแบบคัดกรอง</p>
+          </div>
+        </div>
+
+        <!-- CID field — พยาบาลกรอก เพื่อให้ผู้ปกครอง login ได้ -->
+        <div class="field staff-only" style="margin-bottom:16px">
+          <label for="childCidNumber">เลขบัตรประชาชนเด็ก (CID) — ผู้ปกครองจะใช้ค่านี้เพื่อ Login</label>
+          <input id="childCidNumber" inputmode="numeric" maxlength="13"
+                 placeholder="x-xxxx-xxxxx-xx-x" autocomplete="off">
+          <span class="hint">13 หลัก ไม่ต้องใส่ขีด — ระบบจัดเก็บเพื่อยืนยันตัวตนผู้ปกครอง</span>
+        </div>
+
+        <div class="grid three">
+          <div class="field">
+            <label for="childCode">รหัสเด็ก / HN</label>
+            <input id="childCode" placeholder="เช่น HN หรือรหัสวิจัย">
+          </div>
+          <div class="field">
+            <label for="nickname">ชื่อเล่น</label>
+            <input id="nickname" placeholder="ชื่อเล่น">
+          </div>
+          <div class="field">
+            <label for="childName">ชื่อ-สกุลเด็ก</label>
+            <input id="childName" placeholder="ระบุได้ตามนโยบายข้อมูลส่วนบุคคล">
+          </div>
+        </div>
+
+        <div class="grid four mt">
+          <div class="field">
+            <label for="sex">เพศ</label>
+            <select id="sex">
+              <option value="">เลือก</option>
+              <option value="male">ชาย</option>
+              <option value="female">หญิง</option>
+              <option value="other">อื่น ๆ</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>วันเกิด (วัน / เดือน / พ.ศ.)</label>
+            <div id="birthDatePicker" class="thai-dp-wrap"></div>
+            <input type="hidden" id="birthDate">
+          </div>
+          <div class="field">
+            <label for="ageYears">อายุ (ปี)</label>
+            <input id="ageYears" type="number" min="0" max="18" step="0.1">
+          </div>
+          <div class="field clinical-field">
+            <label for="tonsilSize">ขนาดทอนซิล</label>
+            <select id="tonsilSize">
+              <option value="">ไม่ทราบ / ยังไม่ประเมิน</option>
+              <option value="1+">1+</option>
+              <option value="2+">2+</option>
+              <option value="3+">3+</option>
+              <option value="4+">4+</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid three mt">
+          <div class="field">
+            <label for="weightKg">น้ำหนัก (kg)</label>
+            <input id="weightKg" type="number" min="0" step="0.1">
+          </div>
+          <div class="field">
+            <label for="heightCm">ส่วนสูง (cm)</label>
+            <input id="heightCm" type="number" min="0" step="0.1">
+          </div>
+          <div class="field clinical-field">
+            <label for="adenoidXrayResult">ผล X-ray adenoid</label>
+            <select id="adenoidXrayResult">
+              <option value="">ไม่ทราบ / ยังไม่ตรวจ</option>
+              <option value="normal">ปกติ</option>
+              <option value="enlarged">โต / สงสัยโต</option>
+              <option value="not-done">ยังไม่ได้ตรวจ</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field mt">
+          <label for="childNotes">หมายเหตุ / โรคร่วม / สิ่งที่ผู้ปกครองกังวล</label>
+          <textarea id="childNotes" placeholder="เช่น ภูมิแพ้ หอบหืด พฤติกรรมระหว่างวัน การนอนหลับ"></textarea>
+        </div>
+
+        <label class="check-line" for="consentOk">
+          <input id="consentOk" type="checkbox">
+          <span>ผู้ปกครองรับทราบวัตถุประสงค์ของการคัดกรองออนไลน์และยินยอมให้บันทึกข้อมูลเพื่อการดูแลรักษา / ติดตาม</span>
+        </label>
+
+        <div class="mt" style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn primary" onclick="saveChild()">บันทึกข้อมูลเด็ก</button>
+          <button class="btn ghost"   onclick="showTab('screening')">ไปหน้าคัดกรอง</button>
+        </div>
+      </article>
+    </section>
+
+    <!-- ════ SCREENING ════ -->
+    <section id="screening" class="section">
+      <article class="panel">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Online Screening</div>
+            <h2>แบบคัดกรองเด็กนอนกรน</h2>
+            <p>ตอบคำถามสัญญาณสำคัญ ปัจจัยเสี่ยง และ OSA-18 เพื่อประเมินระดับความเสี่ยงเบื้องต้น</p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="screenChild">เลือกเด็ก</label>
+          <select id="screenChild"></select>
+          <span class="hint">หากยังไม่มีรายชื่อ ให้บันทึกข้อมูลเด็กก่อน</span>
+        </div>
+
+        <div class="grid two mt">
+          <section class="panel soft">
+            <h3>สัญญาณสำคัญระหว่างนอน</h3>
+            <p class="hint" style="margin-top:6px">เลือกคำตอบให้ครบทุกข้อ</p>
+            <div id="coreQuestions" class="question-list" style="margin-top:14px"></div>
+          </section>
+
+          <section class="panel soft">
+            <h3>ปัจจัยเสี่ยงที่ควรแจ้งทีมคลินิก</h3>
+            <p class="hint" style="margin-top:6px">ติ๊กเฉพาะรายการที่มีหรือสงสัยว่ามี</p>
+            <div id="riskFactors" class="check-grid" style="margin-top:14px"></div>
+          </section>
+        </div>
+
+        <section class="panel soft mt">
+          <h3>OSA-18 Quality of Life Questionnaire</h3>
+          <p class="hint" style="margin-top:6px">ให้คะแนน 1–7 ตามความถี่ / ความรุนแรงของอาการในช่วงที่ผ่านมา</p>
+          <div id="osa18" class="question-list" style="margin-top:14px"></div>
+        </section>
+
+        <div class="mt" style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn primary" onclick="submitScreening()">ประเมินผล</button>
+          <button class="btn ghost"   onclick="showTab('video')">ไปอัปโหลดวิดีโอ</button>
+        </div>
+        <div id="screeningResult"></div>
+      </article>
+    </section>
+
+    <!-- ════ VIDEO ════ -->
+    <section id="video" class="section">
+      <article class="panel">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Video + AI</div>
+            <h2>อัปโหลดวิดีโอการนอน</h2>
+            <p>อัปโหลดคลิปขณะหลับเพื่อให้ระบบจัดเก็บใน Google Drive และส่งคิวให้ AI วิเคราะห์เมื่อกำหนด endpoint แล้ว</p>
+          </div>
+        </div>
+
+        <div class="grid two">
+          <div class="field">
+            <label for="videoScreening">เลือกผลคัดกรองที่เกี่ยวข้อง</label>
+            <select id="videoScreening"></select>
+          </div>
+          <div class="field">
+            <label for="videoFile">ไฟล์วิดีโอ</label>
+            <input id="videoFile" type="file" accept="video/*">
+          </div>
+        </div>
+
+        <div class="notice">
+          แนะนำคลิปสั้นที่เห็นการหายใจและได้ยินเสียงกรนชัดเจน
+          หลีกเลี่ยงข้อมูลส่วนบุคคลอื่นที่ไม่จำเป็นในวิดีโอ
+        </div>
+
+        <button class="btn primary" onclick="uploadVideo()">อัปโหลดวิดีโอ</button>
+        <div id="videoResult"></div>
+      </article>
+    </section>
+
+    <!-- ════ DASHBOARD ════ -->
+    <section id="dashboard" class="section">
+      <div class="section-head" style="margin-bottom:20px">
+        <div>
+          <div class="eyebrow">Dashboard</div>
+          <h2>ติดตามสถานะและผลคัดกรอง</h2>
+          <p>ดูผลคัดกรองล่าสุด วิดีโอที่อัปโหลด และสถานะการทบทวนโดยทีมคลินิก</p>
+        </div>
+        <button class="btn secondary" onclick="loadDashboard()">รีเฟรช Dashboard</button>
+      </div>
+
+      <div id="metrics" class="metric-grid"></div>
+
+      <article class="panel mt">
+        <div class="section-head">
+          <div>
+            <h3>ประวัติของผู้ปกครอง</h3>
+            <p>รายการเด็ก ผลคัดกรอง และวิดีโอที่เชื่อมกับบัญชีนี้</p>
+          </div>
+        </div>
+        <div id="parentTable"></div>
+      </article>
+
+      <!-- Clinical panel -->
+      <article id="clinicalDashboard" class="panel mt hidden">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Clinical Review</div>
+            <h3>ภาพรวมเคสสำหรับทีมคลินิก</h3>
+            <p>แสดงเคสล่าสุดและสถานะที่ควรทบทวน</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- Admin panel -->
+      <article id="adminPanel" class="panel mt hidden">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Admin Management</div>
+            <h3>จัดการระบบทั้งหมด</h3>
+            <p>admin สามารถจัดการผู้ใช้ เคสคัดกรอง และสถานะวิดีโอได้จากหน้านี้</p>
+          </div>
+        </div>
+
+        <div class="admin-layout">
+          <div class="stack">
+
+            <section class="panel soft">
+              <h3>จัดการเคสคัดกรอง</h3>
+              <div class="field mt">
+                <label for="adminScreeningId">Screening ID</label>
+                <input id="adminScreeningId" placeholder="เลือกจากตารางหรือกรอกเอง">
+              </div>
+              <div class="field mt">
+                <label for="adminClinicalStatus">สถานะทบทวน</label>
+                <select id="adminClinicalStatus">
+                  <option value="new">new</option>
+                  <option value="reviewing">reviewing</option>
+                  <option value="follow-up">follow-up</option>
+                  <option value="referred">referred</option>
+                  <option value="closed">closed</option>
+                </select>
+              </div>
+              <div class="field mt">
+                <label for="adminReviewerNotes">บันทึกผู้ทบทวน</label>
+                <textarea id="adminReviewerNotes"></textarea>
+              </div>
+              <button class="btn primary mt" onclick="saveAdminScreeningReview()">บันทึกสถานะเคส</button>
+            </section>
+
+            <section class="panel soft">
+              <h3>จัดการผู้ใช้</h3>
+              <div class="field mt">
+                <label for="adminUserId">User ID</label>
+                <input id="adminUserId" placeholder="เลือกจากตาราง">
+              </div>
+              <div class="field mt">
+                <label for="adminDisplayName">ชื่อแสดงผล</label>
+                <input id="adminDisplayName">
+              </div>
+              <div class="grid two mt">
+                <div class="field">
+                  <label for="adminUserRole">Role</label>
+                  <select id="adminUserRole">
+                    <option value="parent">parent</option>
+                    <option value="nurse">nurse</option>
+                    <option value="ent">ent</option>
+                    <option value="doctor">doctor</option>
+                    <option value="admin">admin</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="adminUserStatus">Status</label>
+                  <select id="adminUserStatus">
+                    <option value="active">active</option>
+                    <option value="disabled">disabled</option>
+                  </select>
+                </div>
+              </div>
+              <button class="btn primary mt" onclick="saveAdminUser()">บันทึกผู้ใช้</button>
+            </section>
+
+            <section class="panel soft">
+              <h3>จัดการวิดีโอ</h3>
+              <div class="field mt">
+                <label for="adminVideoId">Video ID</label>
+                <input id="adminVideoId" placeholder="เลือกจากตาราง">
+              </div>
+              <div class="field mt">
+                <label for="adminVideoReviewStatus">สถานะ review</label>
+                <select id="adminVideoReviewStatus">
+                  <option value="pending-human-review">pending-human-review</option>
+                  <option value="reviewing">reviewing</option>
+                  <option value="accepted">accepted</option>
+                  <option value="needs-human-review">needs-human-review</option>
+                  <option value="rejected">rejected</option>
+                </select>
+              </div>
+              <div class="field mt">
+                <label for="adminVideoNotes">บันทึกวิดีโอ</label>
+                <textarea id="adminVideoNotes"></textarea>
+              </div>
+              <button class="btn primary mt" onclick="saveAdminVideo()">บันทึกสถานะวิดีโอ</button>
+            </section>
+
+          </div>
+
+          <section class="panel soft">
+            <h3>ข้อมูลรวมสำหรับ Admin</h3>
+            <div id="adminDashboard" class="mt"></div>
+          </section>
+        </div>
+      </article>
+    </section>
+
+  </main>
+
+  <!-- Toast -->
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="wrap footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo">OSA</div>
+        <div>
+          <div class="footer-title">ระบบคัดกรองเด็กนอนกรนออนไลน์</div>
+          <div class="footer-sub">Snoring Child OSA Screening · Prototype</div>
+        </div>
+      </div>
+      <div class="footer-dev">
+        <div class="footer-dev-label">ผู้พัฒนาระบบ</div>
+        <div class="footer-dev-name">นายแพทย์ชุติพนธ์ บุญมาก</div>
+        <div class="footer-dev-info">นายแพทย์ชำนาญการ (กุมารแพทย์)</div>
+        <div class="footer-dev-info">โรงพยาบาลธัญบุรี อำเภอธัญบุรี จังหวัดปทุมธานี · ปี 2569</div>
+      </div>
+      <div class="footer-note">
+        ระบบนี้เป็นเครื่องมือคัดกรองเบื้องต้นเท่านั้น<br>
+        ไม่ใช่การวินิจฉัยโรคหรือทดแทนการพบแพทย์
+      </div>
+    </div>
+  </footer>
+
+  <!-- ════ SCRIPT (unchanged) ════ -->
+  <script>
+    const state = {
+      token: '',
+      user: null,
+      schema: null,
+      dashboard: null,
+      clinical: null,
+      admin: null,
+      latestScreeningId: ''
+    };
+
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxtbXgN84pfHaPoOanTWA7pWNAQqI1xK2ZuM7oYvyES4tyfl9AAnIcPA7rw29cjmtOR/exec';
+
+    const riskLabels = {
+      'low': 'ความเสี่ยงต่ำ',
+      'moderate': 'ความเสี่ยงปานกลาง',
+      'high': 'ความเสี่ยงสูง',
+      'urgent-review': 'ควรทบทวนโดยเร็ว'
+    };
+
+    window.addEventListener('load', boot);
+
+    function boot() {
+      state.token = localStorage.getItem('snoringToken') || '';
+      callServer('apiBootstrap', [state.token])
+        .then(res => {
+          state.schema = res.schema || fallbackSchema();
+          state.user = res.user || null;
+          if (!state.user) localStorage.removeItem('snoringToken');
+          renderSchema();
+          updateUserPill();
+          showTab(state.user ? 'dashboard' : 'login');
+          if (state.user) loadDashboard();
+        })
+        .catch(() => {
+          state.schema = fallbackSchema();
+          renderSchema();
+          updateUserPill();
+          showTab('login');
+        });
+    }
+
+    function callServer(name, args) {
+      if (window.google && google.script && google.script.run) {
+        return new Promise((resolve, reject) => {
+          google.script.run
+            .withSuccessHandler(resolve)
+            .withFailureHandler(reject)[name].apply(google.script.run, args || []);
+        });
+      }
+      return callServerViaFetch(name, args);
+    }
+
+    function callServerViaFetch(name, args) {
+      const endpoint = getWebAppEndpoint();
+      if (!endpoint) {
+        return Promise.reject(new Error('หน้านี้ถูกเปิดจากไฟล์หรือ preview จึงยังเชื่อมต่อ GAS ไม่ได้ กรุณาเปิดผ่าน Web App deployment'));
+      }
+      return fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'rpc', method: name, args: args || [] })
+      })
+        .then(response => response.text().then(text => ({ response, text })))
+        .then(({ response, text }) => {
+          if (!response.ok) {
+            throw new Error('Web App ปฏิเสธการเข้าถึง กรุณาตั้งค่า Deploy > Manage deployments > Who has access เป็น Anyone');
+          }
+          let payload;
+          try {
+            payload = JSON.parse(text);
+          } catch (err) {
+            throw new Error('Web App ส่งข้อมูลกลับมาไม่ถูกต้อง กรุณาเปิดผ่าน URL ของ Apps Script Web App');
+          }
+          if (!payload.ok) {
+            throw new Error(payload.message || payload.error || 'เรียกใช้งานระบบไม่สำเร็จ');
+          }
+          return payload.result;
+        });
+    }
+
+    function getWebAppEndpoint() {
+      if (/^https:\/\/script\.google\.com\/macros\/s\/.+\/(exec|dev)/.test(window.location.href)) {
+        return window.location.href.split('#')[0].split('?')[0];
+      }
+      return WEB_APP_URL;
+    }
+
+    function goWorkflow(tab) {
+      if (tab !== 'login' && !state.user) {
+        showTab('login');
+        toast('กรุณาเข้าสู่ระบบก่อนใช้งานขั้นตอนนี้');
+        return;
+      }
+      if (tab === 'dashboard' && state.user && !hasClinicalAccess()) {
+        toast('Dashboard นี้จะแสดงข้อมูลของบัญชีผู้ปกครอง หากต้องการ Clinical Dashboard ต้องใช้สิทธิ์ nurse/ENT/doctor/admin');
+      }
+      showTab(tab);
+    }
+
+    function showTab(tab) {
+      document.body.dataset.view = tab;
+      document.querySelectorAll('.section').forEach(section => {
+        section.classList.toggle('active', section.id === tab);
+      });
+      document.querySelectorAll('#tabs button').forEach(button => {
+        button.classList.toggle('active', button.dataset.tab === tab);
+      });
+      if (tab === 'dashboard' && state.user) loadDashboard();
+    }
+
+    function updateUserPill() {
+      const pill = document.getElementById('userPill');
+      const tabs = document.getElementById('tabs');
+      const logoutButton = document.getElementById('logoutButton');
+      const loginQuickActions = document.getElementById('loginQuickActions');
+      if (!state.user) {
+        pill.textContent = 'ยังไม่ได้เข้าสู่ระบบ';
+        tabs.style.display = 'none';
+        if (loginQuickActions) loginQuickActions.classList.remove('hidden');
+        logoutButton.classList.add('hidden');
+        delete document.body.dataset.role;
+        return;
+      }
+      const name = state.user.displayName || state.user.email || state.user.userId;
+      const roleLabel = { parent:'ผู้ปกครอง', nurse:'พยาบาล', doctor:'หมอ', ent:'หมอ ENT', admin:'Admin' };
+      pill.textContent = name + ' · ' + (roleLabel[state.user.role] || state.user.role);
+      tabs.style.display = 'flex';
+      if (loginQuickActions) loginQuickActions.classList.add('hidden');
+      logoutButton.classList.remove('hidden');
+      document.body.dataset.role = state.user.role;
+    }
+
+    function loginWithCid() {
+      const cid = val('childCid').replace(/[-\s]/g, '');
+      const birthDate = val('childBirthDate');
+      if (!cid || cid.length !== 13 || !/^\d{13}$/.test(cid))
+        return toast('กรุณากรอกเลขบัตรประชาชน 13 หลักให้ครบถ้วน');
+      if (!birthDate)
+        return toast('กรุณาเลือกวันเกิดของเด็ก');
+      toast('กำลังเข้าสู่ระบบ...');
+      callServer('loginWithCid', [cid, birthDate])
+        .then(res => {
+          state.token = res.token;
+          state.user = res.user;
+          localStorage.setItem('snoringToken', state.token);
+          updateUserPill();
+          toast('เข้าสู่ระบบสำเร็จ ยินดีต้อนรับ');
+          return loadDashboard();
+        })
+        .then(() => showTab('screening'))
+        .catch(err => toast(err.message || String(err)));
+    }
+
+    function adminLogin() {
+      const username = val('adminUsername');
+      const password = val('adminPassword');
+      if (!username || !password) return toast('กรุณากรอก username และ password');
+      toast('กำลังเข้าสู่ระบบ admin...');
+      callServer('loginAdmin', [username, password])
+        .then(res => {
+          state.token = res.token;
+          state.user = res.user;
+          localStorage.setItem('snoringToken', state.token);
+          updateUserPill();
+          toast('เข้าสู่ระบบ admin สำเร็จ');
+          return loadDashboard();
+        })
+        .then(() => showTab('dashboard'))
+        .catch(err => toast(err.message || String(err)));
+    }
+
+    function logout(showMessage) {
+      state.token = '';
+      state.user = null;
+      state.dashboard = null;
+      state.clinical = null;
+      state.admin = null;
+      localStorage.removeItem('snoringToken');
+      updateUserPill();
+      showTab('login');
+      renderChildOptions();
+      document.getElementById('metrics').innerHTML = '';
+      document.getElementById('parentTable').innerHTML = '';
+      document.getElementById('clinicalDashboard').classList.add('hidden');
+      document.getElementById('adminPanel').classList.add('hidden');
+      if (showMessage !== false) toast('ออกจากระบบแล้ว');
+    }
+
+    function renderSchema() {
+      if (!state.schema) state.schema = fallbackSchema();
+      renderCoreQuestions();
+      renderRiskFactors();
+      renderOsa18();
+    }
+
+    function renderCoreQuestions() {
+      const target = document.getElementById('coreQuestions');
+      const questions = state.schema.coreQuestions || [];
+      target.innerHTML = questions.map((item, i) => `
+        <div class="q-card">
+          <p class="q-label"><span class="q-num">${i + 1}</span>${safe(item.label)}</p>
+          <div class="q-btn-row">
+            <button type="button" class="q-opt" data-core="${safeAttr(item.key)}" data-val="false" onclick="pickQOpt(this)">✓ ไม่มี / ไม่ใช่</button>
+            <button type="button" class="q-opt" data-core="${safeAttr(item.key)}" data-val="true"  onclick="pickQOpt(this)">⚠ มี / ใช่</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function pickQOpt(btn) {
+      const key = btn.dataset.core;
+      document.querySelectorAll(`.q-opt[data-core="${key}"]`).forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    }
+
+    function renderRiskFactors() {
+      const target = document.getElementById('riskFactors');
+      const risks = state.schema.riskFactors || [];
+      target.innerHTML = risks.map(item => `
+        <label class="check">
+          <input type="checkbox" data-risk="${safeAttr(item.key)}">
+          <span>${safe(item.label)}</span>
+        </label>
+      `).join('');
+    }
+
+    const OSA_SHORT = ['ไม่เลย','แทบไม่','น้อยมาก','บางครั้ง','บ่อยพอควร','บ่อยมาก','ทุกวัน'];
+
+    function renderOsa18() {
+      const target = document.getElementById('osa18');
+      const items = state.schema.osa18Items || [];
+      target.innerHTML = items.map((item, index) => `
+        <div class="q-card">
+          <p class="q-label">
+            <span class="q-num">${index + 1}</span>
+            ${safe(item.label)}
+            <span class="q-domain">${safe(item.domain)}</span>
+          </p>
+          <div class="score-btn-row">
+            ${[1,2,3,4,5,6,7].map(v => `
+              <button type="button" class="score-btn" data-osa="${safeAttr(item.key)}" data-val="${v}" onclick="pickScoreBtn(this)">
+                ${v}<span>${OSA_SHORT[v-1]}</span>
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function pickScoreBtn(btn) {
+      const key = btn.dataset.osa;
+      document.querySelectorAll(`.score-btn[data-osa="${key}"]`).forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    }
+
+    function saveChild() {
+      if (!state.token) return toast('กรุณาเข้าสู่ระบบก่อน');
+      if (!document.getElementById('consentOk').checked) return toast('กรุณายืนยันความยินยอมก่อนบันทึก');
+
+      const payload = {
+        childCode: val('childCode'),
+        nickname: val('nickname'),
+        childName: val('childName'),
+        sex: val('sex'),
+        birthDate: val('birthDate'),
+        ageYears: val('ageYears'),
+        weightKg: val('weightKg'),
+        heightCm: val('heightCm'),
+        tonsilSize: val('tonsilSize'),
+        adenoidXrayResult: val('adenoidXrayResult'),
+        childCidNumber: val('childCidNumber').replace(/[-\s]/g,''),
+        notes: val('childNotes'),
+        consentVersion: 'v1',
+        comorbidities: {}
+      };
+
+      if (!payload.childCode && !payload.nickname && !payload.childName) {
+        return toast('กรุณาระบุรหัสเด็กหรือชื่อเล่นอย่างน้อยหนึ่งรายการ');
+      }
+
+      toast('กำลังบันทึกข้อมูลเด็ก...');
+      callServer('saveChildProfile', [state.token, payload])
+        .then(() => {
+          toast('บันทึกข้อมูลเด็กเรียบร้อย');
+          return loadDashboard();
+        })
+        .then(() => showTab('screening'))
+        .catch(err => toast(err.message || String(err)));
+    }
+
+    function submitScreening() {
+      if (!state.token) return toast('กรุณาเข้าสู่ระบบก่อน');
+      const childId = val('screenChild');
+      if (!childId) return toast('กรุณาเลือกเด็ก');
+
+      const coreAnswers = {};
+      let missingCore = false;
+      const coreKeys = new Set();
+      document.querySelectorAll('.q-opt[data-core]').forEach(b => coreKeys.add(b.dataset.core));
+      coreKeys.forEach(key => {
+        const sel = document.querySelector(`.q-opt.selected[data-core="${key}"]`);
+        if (!sel) missingCore = true;
+        else coreAnswers[key] = sel.dataset.val === 'true';
+      });
+      if (missingCore) return toast('กรุณาตอบสัญญาณสำคัญให้ครบทุกข้อ');
+
+      const riskFactors = {};
+      document.querySelectorAll('[data-risk]').forEach(input => {
+        riskFactors[input.dataset.risk] = input.checked;
+      });
+
+      const osa18Answers = {};
+      let missingOsa = false;
+      const osaKeys = new Set();
+      document.querySelectorAll('.score-btn[data-osa]').forEach(b => osaKeys.add(b.dataset.osa));
+      osaKeys.forEach(key => {
+        const sel = document.querySelector(`.score-btn.selected[data-osa="${key}"]`);
+        if (!sel) missingOsa = true;
+        else osa18Answers[key] = Number(sel.dataset.val);
+      });
+      if (missingOsa) return toast('กรุณาตอบ OSA-18 ให้ครบทุกข้อ');
+
+      const payload = { childId, coreAnswers, riskFactors, osa18Answers };
+      toast('กำลังประเมินผล...');
+      callServer('submitScreening', [state.token, payload])
+        .then(res => {
+          const screeningId = res.screeningId || (res.screening && res.screening.screeningId) || '';
+          renderScreeningResult(res.score || res, screeningId);
+          toast('ประเมินผลเรียบร้อย');
+          return loadDashboard();
+        })
+        .catch(err => toast(err.message || String(err)));
+    }
+
+    function renderScreeningResult(score, screeningId) {
+      if (!score) return;
+      state.latestScreeningId = screeningId || state.latestScreeningId;
+      const level = score.riskLevel || 'neutral';
+      const levelClass = riskClass(level);
+      document.getElementById('screeningResult').innerHTML = `
+        <div class="result-card ${levelClass}">
+          <span class="badge ${levelClass}">${riskText(level)}</span>
+          <h3 class="mt">ผลประเมินเบื้องต้น</h3>
+          <div class="grid three mt">
+            <div class="metric"><span>OSA-18 Total</span><strong>${safe(score.osa18Total)}</strong></div>
+            <div class="metric"><span>OSA-18 Group</span><strong>${safe(score.osa18Group)}</strong></div>
+            <div class="metric"><span>Screening ID</span><strong style="font-size:14px">${safe(screeningId || '')}</strong></div>
+          </div>
+          <p style="margin-top:14px;color:var(--ink2)">${safe(score.recommendation)}</p>
+          <button class="btn secondary" style="margin-top:14px" onclick="showTab('video')">อัปโหลดวิดีโอประกอบผลนี้</button>
+        </div>
+      `;
+      if (screeningId) {
+        setTimeout(() => {
+          const videoSelect = document.getElementById('videoScreening');
+          if (videoSelect) videoSelect.value = screeningId;
+        }, 0);
+      }
+    }
+
+    function uploadVideo() {
+      if (!state.token) return toast('กรุณาเข้าสู่ระบบก่อน');
+      const screeningId = val('videoScreening');
+      const file = document.getElementById('videoFile').files[0];
+      if (!screeningId) return toast('กรุณาเลือกผลคัดกรอง');
+      if (!file) return toast('กรุณาเลือกไฟล์วิดีโอ');
+
+      toast('กำลังอ่านไฟล์วิดีโอ...');
+      const reader = new FileReader();
+      reader.onload = () => {
+        callServer('uploadVideo', [state.token, {
+          screeningId,
+          fileName: file.name,
+          mimeType: file.type || 'application/octet-stream',
+          dataUrl: reader.result
+        }])
+          .then(res => {
+            document.getElementById('videoResult').innerHTML = `
+              <div class="success-note">
+                อัปโหลดสำเร็จ · AI status: ${safe(res.aiStatus || 'queued')}
+                ${res.driveUrl ? `<br><a href="${safeAttr(res.driveUrl)}" target="_blank" rel="noopener">เปิดไฟล์ใน Google Drive</a>` : ''}
+              </div>
+            `;
+            toast('อัปโหลดวิดีโอเรียบร้อย');
+            return loadDashboard();
+          })
+          .catch(err => toast(err.message || String(err)));
+      };
+      reader.onerror = () => toast('อ่านไฟล์วิดีโอไม่สำเร็จ');
+      reader.readAsDataURL(file);
+    }
+
+    function loadDashboard() {
+      if (!state.token || !state.user) {
+        renderChildOptions();
+        return Promise.resolve();
+      }
+      return callServer('listParentDashboard', [state.token])
+        .then(data => {
+          state.dashboard = data;
+          renderDashboard(data);
+          const jobs = [];
+          if (hasClinicalAccess()) jobs.push(loadClinical());
+          if (isAdmin()) jobs.push(loadAdmin());
+          return Promise.allSettled(jobs);
+        })
+        .catch(err => {
+          toast(err.message || String(err));
+        });
+    }
+
+    function renderChildOptions() {
+      const children = (state.dashboard && state.dashboard.children) || [];
+      const childOptions = children.length
+        ? children.map(child => {
+          const label = child.nickname || child.childCode || child.childName || child.childId;
+          return `<option value="${safeAttr(child.childId)}">${safe(label)}</option>`;
+        }).join('')
+        : '<option value="">ยังไม่มีข้อมูลเด็ก</option>';
+      document.getElementById('screenChild').innerHTML = childOptions;
+
+      const screenings = (state.dashboard && state.dashboard.screenings) || [];
+      const screeningOptions = screenings.length
+        ? screenings.map(row => {
+          return `<option value="${safeAttr(row.screeningId)}">${safe(formatDate(row.submittedAt))} · ${safe(riskText(row.riskLevel))} · ${safe(row.screeningId)}</option>`;
+        }).join('')
+        : '<option value="">ยังไม่มีผลคัดกรอง</option>';
+      document.getElementById('videoScreening').innerHTML = screeningOptions;
+      if (state.latestScreeningId && screenings.some(row => row.screeningId === state.latestScreeningId)) {
+        document.getElementById('videoScreening').value = state.latestScreeningId;
+      }
+    }
+
+    function renderDashboard(data) {
+      renderChildOptions();
+      const metrics = data.metrics || {};
+      const metricItems = [
+        ['children', 'เด็กในระบบ'],
+        ['screenings', 'แบบคัดกรอง'],
+        ['highRisk', 'เสี่ยงสูง / เร่งด่วน'],
+        ['videos', 'วิดีโอที่อัปโหลด'],
+        ['aiDone', 'AI วิเคราะห์แล้ว']
+      ].filter(item => Object.prototype.hasOwnProperty.call(metrics, item[0]));
+
+      document.getElementById('metrics').innerHTML = metricItems.map(item => `
+        <div class="metric">
+          <span>${safe(item[1])}</span>
+          <strong>${safe(metrics[item[0]])}</strong>
+        </div>
+      `).join('') || '<div class="notice">ยังไม่มีข้อมูล dashboard</div>';
+
+      const childById = {};
+      (data.children || []).forEach(child => { childById[child.childId] = child; });
+      const rows = (data.screenings || []).map(row => {
+        const child = childById[row.childId] || {};
+        return `
+          <tr>
+            <td>${safe(child.nickname || child.childCode || row.childId)}</td>
+            <td>${safe(formatDate(row.submittedAt))}</td>
+            <td><span class="badge ${riskClass(row.riskLevel)}">${safe(riskText(row.riskLevel))}</span></td>
+            <td>${safe(row.osa18Total)}</td>
+            <td>${safe(row.clinicalStatus)}</td>
+            <td>${safe(row.recommendation)}</td>
+          </tr>
+        `;
+      }).join('');
+
+      const videos = (data.videos || []).map(video => `
+        <tr>
+          <td>${safe(formatDate(video.uploadedAt))}</td>
+          <td>${safe(video.fileName)}</td>
+          <td>${safe(video.aiStatus)}</td>
+          <td>${safe(video.reviewStatus)}</td>
+          <td>${video.driveUrl ? `<a href="${safeAttr(video.driveUrl)}" target="_blank" rel="noopener">เปิดไฟล์</a>` : '-'}</td>
+        </tr>
+      `).join('');
+
+      document.getElementById('parentTable').innerHTML = `
+        <div class="grid">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>เด็ก</th><th>วันที่คัดกรอง</th><th>ระดับความเสี่ยง</th><th>OSA-18</th><th>สถานะคลินิก</th><th>คำแนะนำ</th></tr></thead>
+              <tbody>${rows || '<tr><td colspan="6" style="text-align:center;color:var(--mt)">ยังไม่มีผลคัดกรอง</td></tr>'}</tbody>
+            </table>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>วันที่อัปโหลด</th><th>ไฟล์</th><th>AI status</th><th>Review status</th><th>Drive</th></tr></thead>
+              <tbody>${videos || '<tr><td colspan="5" style="text-align:center;color:var(--mt)">ยังไม่มีวิดีโอ</td></tr>'}</tbody>
+            </table>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('clinicalDashboard').classList.toggle('hidden', !hasClinicalAccess());
+      document.getElementById('adminPanel').classList.toggle('hidden', !isAdmin());
+    }
+
+    function loadClinical() {
+      if (!hasClinicalAccess()) return Promise.resolve();
+      const panel = document.getElementById('clinicalDashboard');
+      panel.classList.remove('hidden');
+      return callServer('listClinicalDashboard', [state.token])
+        .then(data => {
+          state.clinical = data;
+          const m = data.metrics || {};
+          const metricHtml = [
+            ['totalChildren', 'เด็กทั้งหมด'],
+            ['totalScreenings', 'แบบคัดกรองทั้งหมด'],
+            ['highRisk', 'เสี่ยงสูง / เร่งด่วน'],
+            ['pendingReview', 'รอทบทวน'],
+            ['videoUploaded', 'วิดีโอ'],
+            ['aiPending', 'AI pending'],
+            ['humanReviewNeeded', 'ต้อง human review']
+          ].map(item => `
+            <div class="metric"><span>${safe(item[1])}</span><strong>${safe(m[item[0]] || 0)}</strong></div>
+          `).join('');
+
+          const rows = (data.latest || []).map(row => `
+            <tr>
+              <td>${safe(row.childCode || row.nickname)}</td>
+              <td>${safe(formatDate(row.submittedAt))}</td>
+              <td><span class="badge ${riskClass(row.riskLevel)}">${safe(riskText(row.riskLevel))}</span></td>
+              <td>${safe(row.osa18Total)}</td>
+              <td>${safe(row.clinicalStatus)}</td>
+              <td><button class="btn small secondary" onclick="fillScreeningReview('${jsArg(row.screeningId)}')">เลือก</button></td>
+            </tr>
+          `).join('');
+
+          panel.innerHTML = `
+            <div class="section-head">
+              <div>
+                <div class="eyebrow">Clinical Review</div>
+                <h3>ภาพรวมเคสสำหรับทีมคลินิก</h3>
+                <p>แสดงเคสล่าสุดและสถานะที่ควรทบทวน</p>
+              </div>
+            </div>
+            <div class="metric-grid">${metricHtml}</div>
+            <div class="table-wrap mt">
+              <table>
+                <thead><tr><th>รหัสเด็ก</th><th>วันที่</th><th>ความเสี่ยง</th><th>OSA-18</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
+                <tbody>${rows || '<tr><td colspan="6" style="text-align:center;color:var(--mt)">ยังไม่มีข้อมูล</td></tr>'}</tbody>
+              </table>
+            </div>
+          `;
+        })
+        .catch(err => {
+          panel.innerHTML += `<div class="danger-note">${safe(err.message || String(err))}</div>`;
+        });
+    }
+
+    function loadAdmin() {
+      if (!isAdmin()) return Promise.resolve();
+      return callServer('listAdminDashboard', [state.token])
+        .then(data => {
+          state.admin = data;
+          const m = data.metrics || {};
+          const metricHtml = [
+            ['totalUsers', 'ผู้ใช้ทั้งหมด'],
+            ['activeParents', 'ผู้ปกครอง active'],
+            ['admins', 'Admin'],
+            ['totalChildren', 'เด็กทั้งหมด'],
+            ['totalScreenings', 'แบบคัดกรอง'],
+            ['totalVideos', 'วิดีโอ'],
+            ['highRisk', 'เสี่ยงสูง / เร่งด่วน'],
+            ['pendingClinicalReview', 'รอทบทวน']
+          ].map(item => `
+            <div class="metric"><span>${safe(item[1])}</span><strong>${safe(m[item[0]] || 0)}</strong></div>
+          `).join('');
+
+          const userRows = (data.users || []).map(user => `
+            <tr>
+              <td>${safe(user.email || user.userId)}</td>
+              <td>${safe(user.displayName)}</td>
+              <td>${safe(user.role)}</td>
+              <td>${safe(user.status)}</td>
+              <td><button class="btn small secondary" onclick="fillUserAdmin('${jsArg(user.userId)}','${jsArg(user.displayName || '')}','${jsArg(user.role || 'parent')}','${jsArg(user.status || 'active')}')">เลือก</button></td>
+            </tr>
+          `).join('');
+
+          const screeningRows = (data.screenings || []).slice(0, 30).map(row => `
+            <tr>
+              <td>${safe(formatDate(row.submittedAt))}</td>
+              <td><span class="badge ${riskClass(row.riskLevel)}">${safe(riskText(row.riskLevel))}</span></td>
+              <td>${safe(row.osa18Total)}</td>
+              <td>${safe(row.clinicalStatus)}</td>
+              <td><button class="btn small secondary" onclick="fillScreeningReview('${jsArg(row.screeningId)}')">เลือก</button></td>
+            </tr>
+          `).join('');
+
+          const videoRows = (data.videos || []).slice(0, 30).map(video => `
+            <tr>
+              <td>${safe(formatDate(video.uploadedAt))}</td>
+              <td>${safe(video.fileName)}</td>
+              <td>${safe(video.aiStatus)}</td>
+              <td>${safe(video.reviewStatus)}</td>
+              <td><button class="btn small secondary" onclick="fillVideoAdmin('${jsArg(video.videoId)}','${jsArg(video.reviewStatus || 'pending-human-review')}')">เลือก</button></td>
+            </tr>
+          `).join('');
+
+          document.getElementById('adminDashboard').innerHTML = `
+            <div class="metric-grid">${metricHtml}</div>
+            <h3 class="mt">ผู้ใช้</h3>
+            <div class="table-wrap mt">
+              <table>
+                <thead><tr><th>Email / User</th><th>ชื่อ</th><th>Role</th><th>Status</th><th>จัดการ</th></tr></thead>
+                <tbody>${userRows || '<tr><td colspan="5" style="text-align:center;color:var(--mt)">ยังไม่มีผู้ใช้</td></tr>'}</tbody>
+              </table>
+            </div>
+            <h3 class="mt">เคสล่าสุด</h3>
+            <div class="table-wrap mt">
+              <table>
+                <thead><tr><th>วันที่</th><th>ความเสี่ยง</th><th>OSA-18</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
+                <tbody>${screeningRows || '<tr><td colspan="5" style="text-align:center;color:var(--mt)">ยังไม่มีเคส</td></tr>'}</tbody>
+              </table>
+            </div>
+            <h3 class="mt">วิดีโอล่าสุด</h3>
+            <div class="table-wrap mt">
+              <table>
+                <thead><tr><th>วันที่</th><th>ไฟล์</th><th>AI</th><th>Review</th><th>จัดการ</th></tr></thead>
+                <tbody>${videoRows || '<tr><td colspan="5" style="text-align:center;color:var(--mt)">ยังไม่มีวิดีโอ</td></tr>'}</tbody>
+              </table>
+            </div>
+          `;
+        })
+        .catch(err => toast(err.message || String(err)));
+    }
+
+    function fillScreeningReview(screeningId) {
+      const id = decodeURIComponent(screeningId || '');
+      document.getElementById('adminScreeningId').value = id;
+      const row = ((state.admin && state.admin.screenings) || []).find(item => item.screeningId === id);
+      if (row) document.getElementById('adminClinicalStatus').value = row.clinicalStatus || 'new';
+      toast('เลือกเคส ' + id);
+    }
+
+    function fillUserAdmin(userId, displayName, role, status) {
+      document.getElementById('adminUserId').value = decodeURIComponent(userId || '');
+      document.getElementById('adminDisplayName').value = decodeURIComponent(displayName || '');
+      document.getElementById('adminUserRole').value = decodeURIComponent(role || 'parent');
+      document.getElementById('adminUserStatus').value = decodeURIComponent(status || 'active');
+    }
+
+    function fillVideoAdmin(videoId, reviewStatus) {
+      document.getElementById('adminVideoId').value = decodeURIComponent(videoId || '');
+      document.getElementById('adminVideoReviewStatus').value = decodeURIComponent(reviewStatus || 'pending-human-review');
+    }
+
+    function saveAdminScreeningReview() {
+      if (!isAdmin()) return toast('ต้องเข้าสู่ระบบ admin');
+      const payload = {
+        screeningId: val('adminScreeningId'),
+        clinicalStatus: val('adminClinicalStatus'),
+        reviewerNotes: val('adminReviewerNotes')
+      };
+      if (!payload.screeningId) return toast('กรุณาระบุ Screening ID');
+      callServer('saveClinicalReview', [state.token, payload])
+        .then(() => {
+          toast('บันทึกสถานะเคสแล้ว');
+          return loadDashboard();
+        })
+        .catch(err => toast(err.message || String(err)));
+    }
+
+    function saveAdminUser() {
+      if (!isAdmin()) return toast('ต้องเข้าสู่ระบบ admin');
+      const payload = {
+        userId: val('adminUserId'),
+        displayName: val('adminDisplayName'),
+        role: val('adminUserRole'),
+        status: val('adminUserStatus')
+      };
+      if (!payload.userId) return toast('กรุณาระบุ User ID');
+      callServer('updateUserByAdmin', [state.token, payload])
+        .then(() => {
+          toast('บันทึกผู้ใช้แล้ว');
+          return loadDashboard();
+        })
+        .catch(err => toast(err.message || String(err)));
+    }
+
+    function saveAdminVideo() {
+      if (!isAdmin()) return toast('ต้องเข้าสู่ระบบ admin');
+      const payload = {
+        videoId: val('adminVideoId'),
+        reviewStatus: val('adminVideoReviewStatus'),
+        reviewerNotes: val('adminVideoNotes')
+      };
+      if (!payload.videoId) return toast('กรุณาระบุ Video ID');
+      callServer('updateVideoReviewByAdmin', [state.token, payload])
+        .then(() => {
+          toast('บันทึกสถานะวิดีโอแล้ว');
+          return loadDashboard();
+        })
+        .catch(err => toast(err.message || String(err)));
+    }
+
+    function hasClinicalAccess() {
+      return !!(state.user && ['nurse', 'ent', 'doctor', 'admin'].includes(state.user.role));
+    }
+
+    function isAdmin() {
+      return !!(state.user && state.user.role === 'admin');
+    }
+
+    function riskClass(value) {
+      if (value === 'urgent-review') return 'urgent';
+      if (value === 'high') return 'high';
+      if (value === 'moderate') return 'moderate';
+      if (value === 'low') return 'low';
+      return 'neutral';
+    }
+
+    function riskText(value) {
+      return riskLabels[value] || value || '-';
+    }
+
+    function formatDate(value) {
+      if (!value) return '-';
+      const date = new Date(value);
+      if (isNaN(date.getTime())) return value;
+      return date.toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
+    }
+
+    function val(id) {
+      const el = document.getElementById(id);
+      return el ? String(el.value || '').trim() : '';
+    }
+
+    function safe(value) {
+      return String(value ?? '').replace(/[&<>"']/g, char => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      })[char]);
+    }
+
+    function safeAttr(value) { return safe(value); }
+
+    function jsArg(value) { return encodeURIComponent(String(value ?? '')); }
+
+    function toast(message) {
+      const box = document.getElementById('toast');
+      box.textContent = message;
+      box.style.display = 'block';
+      clearTimeout(toast.timer);
+      toast.timer = setTimeout(() => { box.style.display = 'none'; }, 3600);
+    }
+
+    function fallbackSchema() {
+      return {
+        coreQuestions: [
+          { key: 'shakeToBreathe',           label: 'ผู้ปกครองต้องเขย่าตัวเด็กขณะหลับเพื่อกระตุ้นให้หายใจ' },
+          { key: 'witnessedApnea',            label: 'เด็กมีการหยุดหายใจขณะหลับ' },
+          { key: 'breathingDifficulty',       label: 'เด็กมีอาการหายใจลำบากขณะหลับ' },
+          { key: 'caregiverConcernBreathing', label: 'ผู้ปกครองกังวลกับการหายใจของลูกขณะหลับ' },
+          { key: 'loudSnoring',               label: 'ระดับความดังของเสียงกรน' },
+          { key: 'frequentSnoring',           label: 'ความถี่หรือความบ่อยของการกรน' }
+        ],
+        riskFactors: [
+          { key: 'ageUnder3',        label: 'อายุน้อยกว่า 3 ปี' },
+          { key: 'obesity',          label: 'อ้วน หรือ weight for height มากกว่าร้อยละ 140' },
+          { key: 'tonsilAdenoid',    label: 'ต่อมทอนซิลโต / สงสัยอะดีนอยด์โต' },
+          { key: 'downSyndrome',     label: 'Down syndrome' },
+          { key: 'craniofacial',     label: 'โครงสร้างใบหน้าหรือกะโหลกผิดปกติ' },
+          { key: 'neuromuscular',    label: 'โรคระบบประสาทและกล้ามเนื้อ / สมองพิการ' },
+          { key: 'chronicLung',      label: 'โรคปอดเรื้อรัง' },
+          { key: 'sickleCell',       label: 'sickle cell disease' },
+          { key: 'geneticMetabolic', label: 'genetic / metabolic / storage disease' },
+          { key: 'failureToThrive',  label: 'เลี้ยงไม่โต / น้ำหนักขึ้นไม่ดี' },
+          { key: 'enuresis',         label: 'ปัสสาวะรดที่นอน' },
+          { key: 'learningBehavior', label: 'ปัญหาพฤติกรรมหรือการเรียน' }
+        ],
+        osa18Items: [
+          { key: 'sd_loud_snoring',   domain: 'Sleep disturbance',  label: 'นอนกรนเสียงดัง' },
+          { key: 'sd_breath_holding', domain: 'Sleep disturbance',  label: 'มีหยุดหายใจเป็นช่วง ๆ' },
+          { key: 'sd_choking_gasping',domain: 'Sleep disturbance',  label: 'สำลักหรือสะดุ้ง / หายใจเฮือกขณะหลับ' },
+          { key: 'sd_restless_sleep', domain: 'Sleep disturbance',  label: 'นอนกระสับกระส่ายหรือตื่นบ่อย' },
+          { key: 'ps_mouth_breathing',domain: 'Physical suffering', label: 'หายใจทางปากเพราะหายใจทางจมูกไม่สะดวก' },
+          { key: 'ps_frequent_colds', domain: 'Physical suffering', label: 'เป็นหวัดหรือติดเชื้อทางเดินหายใจส่วนต้นบ่อย' },
+          { key: 'ps_nasal_discharge',domain: 'Physical suffering', label: 'น้ำมูกไหล' },
+          { key: 'ps_swallowing',     domain: 'Physical suffering', label: 'กลืนอาหารลำบาก' },
+          { key: 'ed_mood',           domain: 'Emotional distress', label: 'อารมณ์แปรปรวนหรือร้องไห้ง่าย' },
+          { key: 'ed_aggressive',     domain: 'Emotional distress', label: 'ก้าวร้าวหรือซุกซนมากผิดปกติ' },
+          { key: 'ed_discipline',     domain: 'Emotional distress', label: 'ควบคุมยาก / ดื้อผิดปกติ' },
+          { key: 'dt_sleepy',         domain: 'Daytime problems',   label: 'เผลอหลับเวลากลางวัน' },
+          { key: 'dt_attention',      domain: 'Daytime problems',   label: 'ขาดสมาธิหรือสมาธิสั้น' },
+          { key: 'dt_wake_up',        domain: 'Daytime problems',   label: 'ปลุกตื่นยากในตอนเช้า' },
+          { key: 'cc_general_health', domain: 'Caregiver concern',  label: 'กังวลสุขภาพทั่วไปของลูก' },
+          { key: 'cc_not_enough_air', domain: 'Caregiver concern',  label: 'กังวลว่าลูกจะหายใจได้ไม่เพียงพอ / ขาดอากาศหายใจ' },
+          { key: 'cc_daily_life',     domain: 'Caregiver concern',  label: 'ความกังวลรบกวนจนทำกิจวัตรประจำวันไม่ได้' },
+          { key: 'cc_frustrated',     domain: 'Caregiver concern',  label: 'รู้สึกหงุดหงิดกับปัญหาที่เกิดขึ้น' }
+        ],
+        scoreLabels: [
+          { value: 1, label: '1 = ไม่เกิดขึ้นเลย' },
+          { value: 2, label: '2 = แทบไม่เกิดขึ้น' },
+          { value: 3, label: '3 = เกิดขึ้นน้อยมาก' },
+          { value: 4, label: '4 = เกิดขึ้นบ้างบางครั้ง' },
+          { value: 5, label: '5 = เกิดขึ้นบ่อยพอควร' },
+          { value: 6, label: '6 = เกิดขึ้นบ่อยมาก' },
+          { value: 7, label: '7 = ตลอดเวลา' }
+        ]
+      };
+    }
+    /* ─── Login Modal ─── */
+    function openLoginModal(tab) {
+      var el = document.getElementById('login');
+      el.dataset.tab = tab || 'parent';
+      el.classList.add('active');
+      document.body.classList.add('login-modal-open');
+      document.addEventListener('keydown', _loginEscHandler);
+    }
+
+    function closeLoginModal() {
+      document.body.classList.remove('login-modal-open');
+      document.getElementById('login').classList.remove('active');
+      document.removeEventListener('keydown', _loginEscHandler);
+    }
+
+    function _loginEscHandler(e) {
+      if (e.key === 'Escape') closeLoginModal();
+    }
+
+    document.getElementById('login').addEventListener('click', function(e) {
+      if (e.target === this) closeLoginModal();
+    });
+
+    /* Keep login as a normal page; CTA buttons can still open the modal. */
+    (function() {
+      var _st = showTab;
+      showTab = function(tab) {
+        closeLoginModal();
+        _st(tab);
+      };
+    })();
+
+    /* ─── Thai Buddhist-Era Date Picker ─── */
+    function buildThaiDatePicker(hiddenId, containerId) {
+      var container = document.getElementById(containerId);
+      if (!container) return;
+
+      var months = [
+        'มกราคม','กุมภาพันธ์','มีนาคม','เมษายน',
+        'พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม',
+        'กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'
+      ];
+
+      var currentBE = new Date().getFullYear() + 543;
+
+      var dayHtml = '<option value="">วัน</option>';
+      for (var d = 1; d <= 31; d++)
+        dayHtml += '<option value="' + d + '">' + d + '</option>';
+
+      var monthHtml = '<option value="">เดือน</option>';
+      months.forEach(function(m, i) {
+        monthHtml += '<option value="' + (i + 1) + '">' + m + '</option>';
+      });
+
+      var yearHtml = '<option value="">พ.ศ.</option>';
+      for (var y = currentBE; y >= 2500; y--)
+        yearHtml += '<option value="' + y + '">' + y + '</option>';
+
+      container.innerHTML =
+        '<div class="thai-dp">' +
+          '<select class="thai-dp-sel" aria-label="วัน">' + dayHtml + '</select>' +
+          '<select class="thai-dp-sel" aria-label="เดือน">' + monthHtml + '</select>' +
+          '<select class="thai-dp-sel" aria-label="พ.ศ.">' + yearHtml + '</select>' +
+        '</div>';
+
+      function sync() {
+        var sels = container.querySelectorAll('.thai-dp-sel');
+        var dv = sels[0].value, mv = sels[1].value, yv = sels[2].value;
+        var hidden = document.getElementById(hiddenId);
+        if (dv && mv && yv) {
+          var ce = parseInt(yv) - 543;
+          var mm = mv.length < 2 ? '0' + mv : mv;
+          var dd = dv.length < 2 ? '0' + dv : dv;
+          hidden.value = ce + '-' + mm + '-' + dd;
+        } else {
+          hidden.value = '';
+        }
+      }
+
+      container.querySelectorAll('.thai-dp-sel').forEach(function(s) {
+        s.addEventListener('change', sync);
+      });
+    }
+
+    /* Initialize pickers after DOM is ready */
+    buildThaiDatePicker('childBirthDate', 'childBirthDatePicker');
+    buildThaiDatePicker('birthDate',      'birthDatePicker');
+  </script>
+</body>
+</html>

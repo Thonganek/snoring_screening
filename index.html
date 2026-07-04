@@ -4890,6 +4890,85 @@
       .score-btn span { font-size: 8px; }
       .q-btn-row { flex-direction: column; }
     }
+
+    /* ── คงแถบหัวเว็บ + ปุ่มลัดไว้เมื่อยังไม่ล็อกอิน (ผู้ปกครองลงทะเบียนเอง) ── */
+    body.anon .topbar {
+      max-height: 140px !important;
+      min-height: 64px !important;
+      padding: 12px 0 !important;
+    }
+    body.anon .tabs-right { display: none !important; }
+
+    /* ══ ปุ่ม CTA หน้าแรก — เด่น สวยงาม จัดลำดับความสำคัญ ══ */
+    body[data-view="login"] .hero-cta{
+      gap:14px !important; margin-top:30px !important; flex-wrap:wrap;
+    }
+    .hero-btn-parent, .hero-btn-admin{
+      min-height:56px !important;
+      padding:15px 26px !important;
+      border-radius:14px !important;
+      font-size:15.5px !important;
+      font-weight:800 !important;
+      letter-spacing:.01em !important;
+      display:inline-flex !important; align-items:center; justify-content:center; gap:9px;
+      cursor:pointer;
+      transition:transform .18s ease, box-shadow .24s ease, background .18s ease, border-color .18s ease !important;
+    }
+
+    /* 1) ปุ่มหลัก — ลงทะเบียนเด็ก */
+    .hero-btn-parent{
+      background:linear-gradient(135deg,#12B0BE 0%,var(--p) 48%,var(--p-dk) 100%) !important;
+      border:1px solid rgba(255,255,255,.28) !important;
+      color:#fff !important;
+      box-shadow:0 12px 30px rgba(8,127,143,.42), inset 0 1px 0 rgba(255,255,255,.28) !important;
+      position:relative; overflow:hidden;
+    }
+    .hero-btn-parent::after{           /* แสงวิ่งบาง ๆ ตอน hover */
+      content:""; position:absolute; inset:0;
+      background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.28) 50%,transparent 70%);
+      transform:translateX(-120%); transition:transform .6s ease;
+    }
+    .hero-btn-parent:hover{
+      transform:translateY(-3px) !important;
+      box-shadow:0 18px 42px rgba(8,127,143,.55), inset 0 1px 0 rgba(255,255,255,.34) !important;
+    }
+    .hero-btn-parent:hover::after{ transform:translateX(120%); }
+
+    /* 2) ปุ่มรอง — ประเมินครั้งต่อไป (teal outline) */
+    body[data-view="login"] .hero-cta button:nth-child(2){
+      background:var(--sur) !important;
+      border:2px solid var(--p) !important;
+      color:var(--p-dk) !important;
+      box-shadow:0 8px 22px rgba(8,127,143,.15) !important;
+    }
+    body[data-view="login"] .hero-cta button:nth-child(2):hover{
+      background:var(--p-lt) !important;
+      transform:translateY(-3px) !important;
+      box-shadow:0 16px 34px rgba(8,127,143,.22) !important;
+    }
+
+    /* 3) ปุ่มเสริม — เจ้าหน้าที่ / หมอ */
+    body[data-view="login"] .hero-cta button:nth-child(3){
+      background:color-mix(in srgb, var(--navy) 5%, transparent) !important;
+      border:1.5px solid var(--bd) !important;
+      color:var(--ink2) !important;
+      box-shadow:none !important;
+    }
+    body[data-view="login"] .hero-cta button:nth-child(3):hover{
+      background:var(--gold-lt) !important;
+      border-color:var(--gold) !important;
+      color:var(--navy) !important;
+      transform:translateY(-3px) !important;
+    }
+
+    @media (max-width:760px){
+      body[data-view="login"] .hero-cta{ flex-direction:column; align-items:stretch; }
+      .hero-btn-parent, .hero-btn-admin{ width:100%; }
+    }
+    @media (prefers-reduced-motion:reduce){
+      .hero-btn-parent, .hero-btn-admin{ transition:none !important; }
+      .hero-btn-parent::after{ display:none; }
+    }
   </style>
 </head>
 
@@ -4907,8 +4986,9 @@
       </div>
       <div class="top-actions">
         <div id="loginQuickActions" class="login-quick-actions">
-          <button type="button" class="quick-login parent" onclick="openLoginModal('parent')">เข้าสู่ระบบผู้ปกครอง</button>
-          <button type="button" class="quick-login admin" onclick="openLoginModal('admin')">ผู้ดูแล</button>
+          <button type="button" class="quick-login parent" onclick="showTab('child')">ลงทะเบียนเด็ก</button>
+          <button type="button" class="quick-login parent" onclick="openLoginModal('parent')">ประเมินครั้งต่อไป</button>
+          <button type="button" class="quick-login admin" onclick="openLoginModal('admin')">เจ้าหน้าที่</button>
         </div>
       </div>
     </div>
@@ -4976,11 +5056,11 @@
 
           <!-- ── ผู้ปกครอง ── -->
           <div class="path parent-path">
-            <div class="path-label">👨‍👩‍👧 ผู้ปกครอง — ทำเองที่บ้าน</div>
+            <div class="path-label">👨‍👩‍👧 ผู้ปกครอง — ทำเองที่บ้าน ไม่ต้องเข้าสู่ระบบ</div>
             <div class="path-steps">
-              <button type="button" class="tl-item" onclick="openLoginModal('parent')">
-                <div class="tl-icon">🔐</div><div class="tl-num">1</div>
-                <div class="tl-body"><strong>เข้าสู่ระบบ</strong><small>บัตร ปชช.&nbsp;+&nbsp;วันเกิดเด็ก</small></div>
+              <button type="button" class="tl-item" onclick="showTab('child')">
+                <div class="tl-icon">📝</div><div class="tl-num">1</div>
+                <div class="tl-body"><strong>ลงทะเบียนเด็ก</strong><small>ข้อมูลเด็ก&nbsp;+&nbsp;บัตร ปชช.&nbsp;+&nbsp;วันเกิด</small></div>
               </button>
               <div class="tl-arrow" aria-hidden="true">›</div>
               <button type="button" class="tl-item" onclick="goWorkflow('screening')">
@@ -5018,8 +5098,9 @@
 
         </div>
         <div class="hero-cta">
-          <button class="hero-btn-parent" onclick="openLoginModal('parent')">👨‍👩‍👧 ผู้ปกครอง</button>
-          <button class="hero-btn-admin" onclick="openLoginModal('admin')">👩‍⚕️ พยาบาล / หมอ</button>
+          <button class="hero-btn-parent" onclick="showTab('child')">📝 ลงทะเบียนเด็ก &amp; เริ่มประเมิน</button>
+          <button class="hero-btn-admin" onclick="openLoginModal('parent')">🔎 เคยลงทะเบียนแล้ว — ประเมินครั้งต่อไป</button>
+          <button class="hero-btn-admin" onclick="openLoginModal('admin')">👩‍⚕️ เจ้าหน้าที่ / หมอ</button>
         </div>
       </article>
     </div>
@@ -5034,25 +5115,26 @@
         <article class="panel parent-access">
           <div class="section-head">
             <div>
-              <div class="eyebrow">Parent Access</div>
-              <h2>เข้าสู่ระบบผู้ปกครอง</h2>
-              <p>ใช้เลขบัตรประชาชนของเด็กและวันเกิดเพื่อเข้าสู่ระบบ ไม่ต้องใช้อีเมลหรือรหัส OTP</p>
+              <div class="eyebrow">ประเมินครั้งต่อไป</div>
+              <h2>ค้นหาเด็กเพื่อประเมินเพิ่ม</h2>
+              <p>เคยลงทะเบียนไว้แล้ว? กรอก <b>เลขบัตรประชาชนเด็ก หรือ ชื่อ-สกุลเด็ก</b> อย่างใดอย่างหนึ่ง พร้อมวันเกิด เพื่อค้นหาลูกของคุณและทำแบบประเมินครั้งต่อไป (ครั้งที่ 2, 3, 4, 5 …)</p>
             </div>
           </div>
           <div class="grid">
             <div class="field">
-              <label for="childCid">เลขบัตรประชาชนเด็ก (13 หลัก)</label>
-              <input id="childCid" inputmode="numeric" maxlength="13" autocomplete="off"
-                     placeholder="x-xxxx-xxxxx-xx-x">
+              <label for="childCid">เลขบัตรประชาชนเด็ก (13 หลัก) หรือ ชื่อ-สกุลเด็ก</label>
+              <input id="childCid" autocomplete="off"
+                     placeholder="เลขบัตร 13 หลัก หรือ ชื่อ-สกุล / ชื่อเล่น">
             </div>
             <div class="field">
               <label>วันเกิดเด็ก (วัน / เดือน / พ.ศ.)</label>
               <div id="childBirthDatePicker" class="thai-dp-wrap"></div>
               <input type="hidden" id="childBirthDate">
             </div>
-            <button class="btn primary" onclick="loginWithCid()">เข้าสู่ระบบ</button>
+            <button class="btn primary" onclick="loginWithCid()">🔎 ค้นหา &amp; เริ่มประเมิน</button>
           </div>
           <div class="notice">
+            ยังไม่เคยลงทะเบียน? <a href="javascript:void(0)" onclick="showTab('child')" style="font-weight:800;text-decoration:underline">ลงทะเบียนเด็กใหม่ที่นี่</a><br>
             ระบบนี้เป็นเครื่องมือคัดกรองและติดตาม ไม่ใช่การวินิจฉัยแทนแพทย์
             หากมีอาการหยุดหายใจ หายใจลำบาก หรือปลุกยากผิดปกติควรพบแพทย์
           </div>
@@ -5090,11 +5172,11 @@
       <article class="panel">
         <div class="section-head">
           <div>
-            <div class="eyebrow">Child Profile</div>
-            <h2>บันทึกข้อมูลเด็ก</h2>
-            <p>พยาบาลกรอกข้อมูล CID และข้อมูลคลินิกครั้งแรก — ผู้ปกครองดูข้อมูลพื้นฐานและตอบแบบคัดกรองเองได้</p>
+            <div class="eyebrow">ลงทะเบียนเด็ก</div>
+            <h2>ลงทะเบียนข้อมูลเด็ก</h2>
+            <p>กรอกข้อมูลเด็ก เลขบัตรประชาชน และวันเกิด เพื่อเริ่มทำแบบคัดกรองได้ทันที — เลขบัตร + วันเกิด จะใช้สำหรับค้นหาเมื่อกลับมาประเมินครั้งต่อไป</p>
           </div>
-          <button class="btn secondary" onclick="loadDashboard()">รีเฟรชข้อมูล</button>
+          <button class="btn secondary staff-only" onclick="loadDashboard()">รีเฟรชข้อมูล</button>
         </div>
 
         <!-- Banner พยาบาล (ซ่อนเมื่อ role=parent) -->
@@ -5106,21 +5188,17 @@
           </div>
         </div>
 
-        <!-- CID field — พยาบาลกรอก เพื่อให้ผู้ปกครอง login ได้ -->
-        <div class="field staff-only" style="margin-bottom:16px">
-          <label for="childCidNumber">เลขบัตรประชาชนเด็ก (CID) — ผู้ปกครองจะใช้ค่านี้เพื่อ Login</label>
+        <!-- CID field — จำเป็นสำหรับผู้ปกครอง เพื่อใช้ค้นหาเมื่อกลับมาประเมินครั้งต่อไป -->
+        <div class="field" style="margin-bottom:16px">
+          <label for="childCidNumber">เลขบัตรประชาชนเด็ก (13 หลัก) <span style="color:var(--red)">*</span></label>
           <input id="childCidNumber" inputmode="numeric" maxlength="13"
                  placeholder="x-xxxx-xxxxx-xx-x" autocomplete="off">
-          <span class="hint">13 หลัก ไม่ต้องใส่ขีด — ระบบจัดเก็บเพื่อยืนยันตัวตนผู้ปกครอง</span>
+          <span class="hint">จำเป็น — ใช้ยืนยันตัวตนและค้นหาข้อมูลเด็กเมื่อกลับมาประเมินครั้งต่อไป</span>
         </div>
 
-        <div class="grid three">
+        <div class="grid two">
           <div class="field">
-            <label for="childCode">รหัสเด็ก / HN</label>
-            <input id="childCode" placeholder="เช่น HN หรือรหัสวิจัย">
-          </div>
-          <div class="field">
-            <label for="nickname">ชื่อเล่น</label>
+            <label for="nickname">ชื่อเล่น <span style="color:var(--red)">*</span></label>
             <input id="nickname" placeholder="ชื่อเล่น">
           </div>
           <div class="field">
@@ -5140,7 +5218,7 @@
             </select>
           </div>
           <div class="field">
-            <label>วันเกิด (วัน / เดือน / พ.ศ.)</label>
+            <label>วันเกิด (วัน / เดือน / พ.ศ.) <span style="color:var(--red)">*</span></label>
             <div id="birthDatePicker" class="thai-dp-wrap"></div>
             <input type="hidden" id="birthDate">
           </div>
@@ -5191,8 +5269,8 @@
         </label>
 
         <div class="mt" style="display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn primary" onclick="saveChild()">บันทึกข้อมูลเด็ก</button>
-          <button class="btn ghost"   onclick="showTab('screening')">ไปหน้าคัดกรอง</button>
+          <button class="btn primary" onclick="saveChild()">ลงทะเบียน &amp; ไปทำแบบคัดกรอง</button>
+          <button class="btn ghost staff-only" onclick="showTab('screening')">ไปหน้าคัดกรอง</button>
         </div>
       </article>
     </section>
@@ -5527,9 +5605,10 @@
     }
 
     function goWorkflow(tab) {
+      if (tab === 'child') { showTab('child'); return; }   // ลงทะเบียนเด็กได้โดยไม่ต้องเข้าสู่ระบบ
       if (tab !== 'login' && !state.user) {
-        showTab('login');
-        toast('กรุณาเข้าสู่ระบบก่อนใช้งานขั้นตอนนี้');
+        toast('กรุณาลงทะเบียนเด็ก หรือค้นหาด้วยเลขบัตร + วันเกิดก่อนเริ่มประเมิน');
+        showTab('child');
         return;
       }
       if (tab === 'dashboard' && state.user && !hasClinicalAccess()) {
@@ -5559,9 +5638,12 @@
         tabs.style.display = 'none';
         if (loginQuickActions) loginQuickActions.classList.remove('hidden');
         logoutButton.classList.add('hidden');
-        delete document.body.dataset.role;
+        /* ผู้เยี่ยมชมทั่วไป = โหมดผู้ปกครอง → ซ่อนช่องเฉพาะเจ้าหน้าที่/คลินิก */
+        document.body.dataset.role = 'parent';
+        document.body.classList.add('anon');   /* ยังไม่ล็อกอิน → คงแถบหัวเว็บไว้ */
         return;
       }
+      document.body.classList.remove('anon');
       const name = state.user.displayName || state.user.email || state.user.userId;
       const roleLabel = { parent:'ผู้ปกครอง', nurse:'พยาบาล', doctor:'หมอ', ent:'หมอ ENT', admin:'Admin' };
       pill.textContent = name + ' · ' + (roleLabel[state.user.role] || state.user.role);
@@ -5572,20 +5654,20 @@
     }
 
     function loginWithCid() {
-      const cid = val('childCid').replace(/[-\s]/g, '');
+      const query = val('childCid');
       const birthDate = val('childBirthDate');
-      if (!cid || cid.length !== 13 || !/^\d{13}$/.test(cid))
-        return toast('กรุณากรอกเลขบัตรประชาชน 13 หลักให้ครบถ้วน');
+      if (!query)
+        return toast('กรุณากรอกเลขบัตรประชาชน หรือชื่อ-สกุลของเด็ก');
       if (!birthDate)
         return toast('กรุณาเลือกวันเกิดของเด็ก');
-      toast('กำลังเข้าสู่ระบบ...');
-      callServer('loginWithCid', [cid, birthDate])
+      toast('กำลังค้นหาข้อมูลเด็ก...');
+      callServer('loginParentLookup', [query, birthDate])
         .then(res => {
           state.token = res.token;
           state.user = res.user;
           localStorage.setItem('snoringToken', state.token);
           updateUserPill();
-          toast('เข้าสู่ระบบสำเร็จ ยินดีต้อนรับ');
+          toast('พบข้อมูลเด็กแล้ว เริ่มประเมินได้เลย');
           return loadDashboard();
         })
         .then(() => showTab('screening'))
@@ -5695,7 +5777,6 @@
     }
 
     function saveChild() {
-      if (!state.token) return toast('กรุณาเข้าสู่ระบบก่อน');
       if (!document.getElementById('consentOk').checked) return toast('กรุณายืนยันความยินยอมก่อนบันทึก');
 
       const payload = {
@@ -5716,9 +5797,31 @@
       };
 
       if (!payload.childCode && !payload.nickname && !payload.childName) {
-        return toast('กรุณาระบุรหัสเด็กหรือชื่อเล่นอย่างน้อยหนึ่งรายการ');
+        return toast('กรุณาระบุชื่อเล่นหรือชื่อ-สกุลเด็กอย่างน้อยหนึ่งรายการ');
       }
 
+      /* ── ผู้ปกครองยังไม่ได้เข้าระบบ: ลงทะเบียนเด็กใหม่แบบ public แล้ว auto-login ── */
+      if (!state.token) {
+        if (!/^\d{13}$/.test(payload.childCidNumber))
+          return toast('กรุณากรอกเลขบัตรประชาชนเด็ก 13 หลักให้ครบถ้วน');
+        if (!payload.birthDate)
+          return toast('กรุณาเลือกวันเกิดของเด็ก');
+        toast('กำลังลงทะเบียนเด็ก...');
+        callServer('registerChildPublic', [payload])
+          .then(res => {
+            state.token = res.token;
+            state.user = res.user;
+            localStorage.setItem('snoringToken', state.token);
+            updateUserPill();
+            toast('ลงทะเบียนเด็กสำเร็จ เริ่มทำแบบคัดกรองได้เลย');
+            return loadDashboard();
+          })
+          .then(() => showTab('screening'))
+          .catch(err => toast(err.message || String(err)));
+        return;
+      }
+
+      /* ── มี session อยู่แล้ว (เจ้าหน้าที่ หรือผู้ปกครองที่ค้นหาแล้ว) ── */
       toast('กำลังบันทึกข้อมูลเด็ก...');
       callServer('saveChildProfile', [state.token, payload])
         .then(() => {
@@ -5730,7 +5833,7 @@
     }
 
     function submitScreening() {
-      if (!state.token) return toast('กรุณาเข้าสู่ระบบก่อน');
+      if (!state.token) { toast('กรุณาลงทะเบียนเด็ก หรือค้นหาด้วยเลขบัตร + วันเกิดก่อน'); return showTab('child'); }
       const childId = val('screenChild');
       if (!childId) return toast('กรุณาเลือกเด็ก');
 
@@ -5800,7 +5903,7 @@
     }
 
     function uploadVideo() {
-      if (!state.token) return toast('กรุณาเข้าสู่ระบบก่อน');
+      if (!state.token) { toast('กรุณาลงทะเบียนเด็ก หรือค้นหาด้วยเลขบัตร + วันเกิดก่อน'); return showTab('child'); }
       const screeningId = val('videoScreening');
       const file = document.getElementById('videoFile').files[0];
       if (!screeningId) return toast('กรุณาเลือกผลคัดกรอง');
